@@ -35,7 +35,7 @@ Methods
 
 Convert element to array of element name, element content and element attributes.
 
-### getAttribute(node, key, parseValue = true)
+### getAttribute(node, attribute, parseValue = true)
 
 ### getAttributes(node, parseValue = true)
 
@@ -45,7 +45,7 @@ Convert element to array of element name, element content and element attributes
 
 ### getData(node, parseValue = true)
 
-### getDatum(node, key, parseValue = true)
+### getDatum(node, datum, parseValue = true)
 
 ### getElement(query, scope = document)
 
@@ -101,7 +101,7 @@ Get closest `<form>` element from current element.
 
 ### isWindow(node)
 
-### letAttribute(node, key)
+### letAttribute(node, attribute)
 
 ### letAttributes(node, attributes)
 
@@ -159,7 +159,7 @@ letData(node, {
 });
 ~~~
 
-### letDatum(node, key)
+### letDatum(node, datum)
 
 ### letElement(node)
 
@@ -181,7 +181,7 @@ letData(node, {
 
 ### letText(node)
 
-### setAttribute(node, key, value)
+### setAttribute(node, attribute, value)
 
 ### setAttributes(node, attributes)
 
@@ -227,7 +227,7 @@ setData(node, {
 });
 ~~~
 
-### setDatum(node, key, value)
+### setDatum(node, datum, value)
 
 ### setElement(name|node, content, attributes)
 

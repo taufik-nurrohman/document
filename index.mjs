@@ -10,17 +10,17 @@ export const H = D.head;
 export const R = D.documentElement;
 
 export const fromElement = node => {
-    let data = getAttributes(node),
+    let attributes = getAttributes(node),
         content = getHTML(node),
         title = getName(node);
-    return false !== content ? [title, content, data] : [title, data];
+    return false !== content ? [title, content, attributes] : [title, attributes];
 };
 
-export const getAttribute = (node, key, parseValue = true) => {
-    if (!hasAttribute(node, key)) {
+export const getAttribute = (node, attribute, parseValue = true) => {
+    if (!hasAttribute(node, attribute)) {
         return null;
     }
-    let value = node.getAttribute(key);
+    let value = node.getAttribute(attribute);
     return parseValue ? toValue(value) : value;
 };
 
@@ -42,21 +42,23 @@ export const getClasses = (node, toArray = true) => {
 };
 
 export const getData = (node, parseValue = true) => {
-    let values = getAttributes(node, parseValue);
-    for (let key in values) {
-        if ('data-' !== key.slice(0, 5)) {
-            delete attributes[key];
+    let attributes = getAttributes(node, parseValue);
+    for (let attribute in attributes) {
+        if ('data-' !== attribute.slice(0, 5)) {
+            delete attributes[attribute];
         }
     }
-    return values;
+    return attributes;
 };
 
-export const getDatum = (node, key, parseValue = true) => {
-    let value = getAttribute(node, 'data-' + key, parseValue),
+export const getDatum = (node, datum, parseValue = true) => {
+    let value = getAttribute(node, 'data-' + datum, parseValue),
         v = value.trim();
     if (
         parseValue &&
-        v && (
+        v &&
+        isString(v) &&
+        (
             '[' === v[0] && ']' === v.slice(-1) ||
             '{' === v[0] && '}' === v.slice(-1)
         ) &&
@@ -205,21 +207,21 @@ export const isWindow = node => {
     return node === W;
 };
 
-export const letAttribute = (node, key) => {
-    return node.removeAttribute(key), node;
+export const letAttribute = (node, attribute) => {
+    return node.removeAttribute(attribute), node;
 };
 
 export const letAttributes = (node, attributes) => {
     if (isArray(attributes)) {
-        attributes.forEach(key => letAttribute(node, key));
+        attributes.forEach(attribute => letAttribute(node, attribute));
         return node;
     }
     if (isObject(attributes || attributes = getAttributes(node, false))) {
         let value;
-        for (let key in attributes) {
-            value = attributes[key];
+        for (let attribute in attributes) {
+            value = attributes[attribute];
             if (value || "" === value) {
-                letAttribute(node, key);
+                letAttribute(node, attribute);
             }
         }
     }
@@ -248,23 +250,23 @@ export const letClasses = (node, classes) => {
 
 export const letData = (node, data) => {
     if (isArray(data)) {
-        data.forEach(value => letAttribute(node, 'data-' + value));
+        data.forEach(datum => letAttribute(node, 'data-' + datum));
         return node;
     }
     if (isObject(data || data = getData(node, false))) {
         let value;
-        for (let key in data) {
-            value = data[key];
+        for (let datum in data) {
+            value = data[datum];
             if (value || "" === value) {
-                letAttribute(node, 'data-' + key);
+                letAttribute(node, 'data-' + datum);
             }
         }
     }
     return node;
 };
 
-export const letDatum = (node, key) => {
-    return letAttribute(node, 'data-' + key);
+export const letDatum = (node, datum) => {
+    return letAttribute(node, 'data-' + datum);
 };
 
 export const letElement = node => {
@@ -316,18 +318,18 @@ export const letText = node => {
 
 export const script = D.currentScript;
 
-export const setAttribute = (node, key, value) => {
-    return node.setAttribute(key, fromValue(value)), node;
+export const setAttribute = (node, attribute, value) => {
+    return node.setAttribute(attribute, fromValue(value)), node;
 };
 
 export const setAttributes = (node, attributes) => {
     let value;
-    for (let key in attributes) {
-        value = attributes[key];
+    for (let attribute in attributes) {
+        value = attributes[attribute];
         if (value || "" === value) {
-            setAttribute(node, key, value);
+            setAttribute(node, attribute, value);
         } else {
-            letAttribute(node, key);
+            letAttribute(node, attribute);
         }
     }
     return node;
@@ -359,21 +361,21 @@ export const setClasses = (node, classes) => {
 
 export const setData = (node, data) => {
     let value;
-    for (let ket in data) {
-        value = data[key];
+    for (let datum in data) {
+        value = data[datum];
         if (value || "" === value) {
-            setDatum(node, key, value);
+            setDatum(node, datum, value);
         } else {
-            letDatum(node, key);
+            letDatum(node, datum);
         }
     }
 };
 
-export const setDatum = (node, key, value) => {
+export const setDatum = (node, datum, value) => {
     if (isArray(value) || isObject(value)) {
         value = toJSON(value);
     }
-    return setAttribute(node, 'data-' + key, value);
+    return setAttribute(node, 'data-' + datum, value);
 };
 
 export const setElement = (node, content, attributes) => {
@@ -385,16 +387,8 @@ export const setElement = (node, content, attributes) => {
     if (isString(content)) {
         setInnerHTML(node, content);
     }
-    if(isObject(attributes)) {
-        let value;
-        for (let key in attributes) {
-            value = attributes[key];
-            if (!value && "" !== value) {
-                setAttribute(node, value);
-            } else {
-                letAttribute(node);
-            }
-        }
+    if (isObject(attributes)) {
+        setAttributes(node, attributes);
     }
     return node;
 };
