@@ -6,12 +6,12 @@ HTML document object utility.
 Usage
 -----
 
-### CommonJS
+### CommonJS (TODO)
 
 ~~~ js
-const {element} = require('@taufik-nurrohman/document');
+const {setElement} = require('@taufik-nurrohman/document');
 
-console.log(element('div', 'Content goes here.', {
+console.log(setElement('div', 'Content goes here.', {
     'class': 'foo bar',
     'id': 'baz'
 }));
@@ -20,9 +20,9 @@ console.log(element('div', 'Content goes here.', {
 ### ECMAScript
 
 ~~~ js
-import {element} = from '@taufik-nurrohman/document';
+import {setElement} = from '@taufik-nurrohman/document';
 
-console.log(element('div', 'Content goes here.', {
+console.log(setElement('div', 'Content goes here.', {
     'class': 'foo bar',
     'id': 'baz'
 }));
@@ -31,89 +31,97 @@ console.log(element('div', 'Content goes here.', {
 Methods
 -------
 
-### after(node, target)
-
-Insert `node` after `target`.
-
-### append(node, target)
-
-Append `node` to `target`.
-
-### before(node, target)
-
-Insert `node` before `target`.
-
-### element(name|node, content, attributes)
-
-Create a HTML element or update the existing HTML element.
-
-~~~ js
-console.log(element('div', 'Content goes here.', {
-    'id': 'foo-bar'
-}));
-
-console.log(element('input', false, {
-    'name': 'title',
-    'type': 'text',
-    'value': 'Title Goes Here'
-}));
-
-console.log(element('input', {
-    'name': 'title',
-    'type': 'text',
-    'value': 'Title Goes Here'
-}));
-~~~
-
-~~~ js
-let input = queryElement('input[name="title"][type="text"]');
-
-console.log(element(input, {
-    'value': 'Title Goes Here'
-}));
-~~~
-
 ### fromElement(node)
 
 Convert element to array of element name, element content and element attributes.
 
-### getAttribute(node, key, eval = true)
+### getAttribute(node, key, parseValue = true)
 
-### getAttributes(node, eval = true)
+### getAttributes(node, parseValue = true)
+
+### getClass(node)
 
 ### getClasses(node, toArray = true)
 
-### getInnerHTML(node, trim = true)
+### getData(node, parseValue = true)
 
-### getInnerText(node, trim = true)
+### getDatum(node, key, parseValue = true)
+
+### getElement(query, scope = document)
+
+### getElements(query, scope = document)
+
+### getFormElement(nameOrIndex)
+
+### getFormElements()
+
+### getHTML(node, trim = true)
+
+### getName(node)
+
+Get element name.
+
+### getNext(node)
+
+### getParent(node)
+
+Get element&rsquo;s parent.
+
+### getParentForm(node)
+
+Get closest `<form>` element from current element.
+
+### getPrev(node)
+
+### getScriptElements()
+
+### getStyle(node, style)
+
+### getStyles(node, styles)
+
+### getStyleElements()
 
 ### getState(node, key)
+
+### getText(node, trim = true)
 
 ### hasParent(node)
 
 ### hasState(node)
 
-### isParent(node, target)
+### isComment(node)
+
+### isDocument(node)
+
+### isElement(node)
+
+### isParent(node, parent)
+
+### isText(node)
+
+### isWindow(node)
 
 ### letAttribute(node, key)
 
 ### letAttributes(node, attributes)
 
 ~~~ js
-// Remove all attribute(s)
+// Remove all attributes
 letAttribute(node);
 
 // Remove `class` and `id` attribute only
 letAttribute(node, ['class', 'id']);
 
 // Remove `class` and `id` attribute only
-const preserveValueAttribute = true;
+const removeValueAttribute = false;
 letAttribute(node, {
     'class': true,
     'id': true,
-    'value': preserveValueAttribute // Keep this attribute
+    'value': removeValueAttribute // Keep this attribute
 });
 ~~~
+
+### letClass(node, class)
 
 ### letClasses(node, classes)
 
@@ -133,31 +141,61 @@ letClasses(node, {
 });
 ~~~
 
-### letInnerHTML(node)
+### letData(node, data)
 
-### letInnerText(node)
+~~~ js
+// Remove all `data-*` attributes
+letData(node);
+
+// Remove `data-foo` and `data-bar` attribute only
+letData(node, ['foo', 'bar']);
+
+// Remove `data-foo` and `data-bar` attribute only
+const removeBazData = false;
+letData(node, {
+    'foo': true,
+    'bar': true,
+    'baz': !removeBazData // Keep this attribute
+});
+~~~
+
+### letDatum(node, key)
+
+### letElement(node)
+
+### letFirstChild(parent)
+
+### letHTML(node)
+
+### letLastChild(parent)
+
+### letNext(node)
+
+### letPrev(node)
 
 ### letState(node)
 
-### name(node)
+### letStyle(node, style)
 
-Get element name.
+### letStyles(node, styles)
 
-### parent(node)
-
-Get element&rsquo;s parent.
-
-### prepend(node, target)
-
-Prepend `node` to `target`.
-
-### queryElement(query, scope = document)
-
-### queryElements(query, scope = document)
+### letText(node)
 
 ### setAttribute(node, key, value)
 
 ### setAttributes(node, attributes)
+
+~~~ js
+// Add `foo` and `bar` attributes
+// Remove the `baz` attribute if exists
+setAttributes(node, {
+    'foo': 1,
+    'bar': 100,
+    'baz': false
+});
+~~~
+
+### setClass(node, class)
 
 ### setClasses(node, classes)
 
@@ -177,15 +215,75 @@ setClasses(node, {
 });
 ~~~
 
-### setInnerHTML(node)
+### setData(node, data)
 
-### setInnerText(node)
+~~~ js
+// Add `data-foo` and `data-bar` attributes
+// Remove the `data-baz` attribute if exists
+setData(node, {
+    'foo': 1,
+    'bar': 100,
+    'baz': false
+});
+~~~
+
+### setDatum(node, key, value)
+
+### setElement(name|node, content, attributes)
+
+Create a HTML element or update the existing HTML element.
+
+~~~ js
+console.log(setElement('div', 'Content goes here.', {
+    'id': 'foo-bar'
+}));
+
+console.log(setElement('input', false, {
+    'name': 'title',
+    'type': 'text',
+    'value': 'Title Goes Here'
+}));
+
+console.log(setElement('input', {
+    'name': 'title',
+    'type': 'text',
+    'value': 'Title Goes Here'
+}));
+~~~
+
+~~~ js
+let input = queryElement('input[name="title"][type="text"]');
+
+console.log(setElement(input, {
+    'value': 'Title Goes Here'
+}));
+~~~
+
+### setFirstChild(parent, node)
+
+### setHTML(node)
+
+### setLastChild(parent, node)
+
+### setNext(parent, node)
+
+### setPrev(parent, node)
 
 ### setState(node, key, value)
+
+### setStyle(node, style, value)
+
+### setStyles(node, styles)
+
+### setText(node)
 
 ### toElement(array)
 
 Convert array of element name, element content and element attributes to element.
+
+### toString(node)
+
+Get element&rsquo;s outer HTML.
 
 ### toggleState(node, key)
 
