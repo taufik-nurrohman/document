@@ -1,0 +1,32 @@
+{
+  "author": "Taufik Nurrohman",
+  "bugs": "https://github.com/taufik-nurrohman/document/issues",
+  "dependencies": {
+    "@taufik-nurrohman/from": "^0.0.3",
+    "@taufik-nurrohman/is": "^0.0.6",
+    "@taufik-nurrohman/to": "^0.0.7"
+  },
+  "description": "HTML document object utility.",
+  "exports": {
+    "import": "./index.mjs",
+    "require": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "index.mjs"
+  ],
+  "homepage": "https://taufik-nurrohman.js.org",
+  "keywords": [
+    "document",
+    "helper",
+    "utility"
+  ],
+  "license": "MIT",
+  "main": "index.mjs",
+  "name": "@taufik-nurrohman/document",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taufik-nurrohman/document.git"
+  },
+  "version": "0.0.1"
+}
