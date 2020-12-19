@@ -81,7 +81,7 @@ Get closest `<form>` element from current element.
 
 ### getStyleElements()
 
-### getState(node, key)
+### getState(node, state)
 
 ### getText(node, trim = true)
 
@@ -269,7 +269,7 @@ console.log(setElement(input, {
 
 ### setPrev(parent, node)
 
-### setState(node, key, value)
+### setState(node, state, value)
 
 ### setStyle(node, style, value)
 
@@ -285,7 +285,7 @@ Convert array of element name, element content and element attributes to element
 
 Get element&rsquo;s outer HTML.
 
-### toggleState(node, key)
+### toggleState(node, state)
 
 Properties
 ----------
