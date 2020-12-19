@@ -162,8 +162,14 @@ Prepend `node` to `target`.
 ### setClasses(node, classes)
 
 ~~~ js
+// Set class values to `['foo', 'bar']`
 setClasses(node, 'foo bar');
+
+// Add `foo` and `bar` to the class values
 setClasses(node, ['foo', 'bar']);
+
+// Add `foo` and `bar` to the class values
+// Remove the `baz` value if exists
 setClasses(node, {
     'foo': true,
     'bar': true,
