@@ -1,5 +1,5 @@
-HTML Document Utility
-=====================
+Document Utility
+================
 
 HTML document object utility.
 
@@ -45,7 +45,7 @@ Insert `node` before `target`.
 
 ### element(name|node, content, attributes)
 
-Create a HTML element or update the existing element.
+Create a HTML element or update the existing HTML element.
 
 ~~~ js
 console.log(element('div', 'Content goes here.', {
