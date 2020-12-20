@@ -1,6 +1,6 @@
 import {fromJSON, fromValue} from '@taufik-nurrohman/from';
-import {isArray, isInstance, isObject, isString} from '@taufik-nurrohman/is';
-import {toJSON, toValue} from '@taufik-nurrohman/to';
+import {isArray, isInstance, isNumber, isObject, isString} from '@taufik-nurrohman/is';
+import {toCaseCamel, toJSON, toValue} from '@taufik-nurrohman/to';
 
 export const D = document;
 export const W = window;
@@ -32,6 +32,11 @@ export const getAttributes = (node, parseValue = true) => {
         values[attributes[i].name] = parseValue ? toValue(value) : value;
     }
     return values;
+};
+
+export const getChildren = (node, index) => {
+    let children = node.children;
+    return isNumber(index) ? (children[index] || null) : (children || []);
 };
 
 export const getClass = node => getClasses(node, false); // Dummy
@@ -137,12 +142,26 @@ export const getScriptElements = () => {
     return getElements('script');
 };
 
-export const getStyle = (node, style) => {
-    // TODO
+export const getStyle = (node, style, parseValue = true) => {
+    let value = W.getComputedStyle(node).getPropertyValue(style);
+    if (parseValue) {
+        value = toValue(value);
+    }
+    return value || "" === value || 0 === value ? value : null;
 };
 
-export const getStyles = (node, styles) => {
-    // TODO
+export const getStyles = (node, styles, parseValue = true) => {
+    let properties = W.getComputedStyle(node),
+        values = {};
+    if (isArray(styles)) {
+        let value;
+        styles.forEach(style => {
+            value = properties.getPropertyValue(style);
+            values[style] = parseValue ? toValue(value) : value;
+        });
+        return values;
+    }
+    return properties;
 };
 
 export const getStyleElements = () => {
@@ -217,10 +236,8 @@ export const letAttributes = (node, attributes) => {
         return node;
     }
     if (isObject(attributes || attributes = getAttributes(node, false))) {
-        let value;
         for (let attribute in attributes) {
-            value = attributes[attribute];
-            if (value || "" === value) {
+            if (attributes[attribute]) {
                 letAttribute(node, attribute);
             }
         }
@@ -254,10 +271,8 @@ export const letData = (node, data) => {
         return node;
     }
     if (isObject(data || data = getData(node, false))) {
-        let value;
         for (let datum in data) {
-            value = data[datum];
-            if (value || "" === value) {
+            if (data[datum]) {
                 letAttribute(node, 'data-' + datum);
             }
         }
@@ -304,11 +319,23 @@ export const letState = (node, state) => {
 };
 
 export const letStyle = (node, style) => {
-    // TODO
+    return (node.style[toCaseCamel(style)] = null), node;
 };
 
 export const letStyles = (node, styles) => {
-    // TODO
+    if (isArray(styles)) {
+        styles.forEach(style => letStyle(node, style));
+        return node;
+    }
+    if (isObject(styles)) {
+        for (let style in styles) {
+            if (styles[style]) {
+                letStyle(node, style);
+            }
+        }
+        return node;
+    }
+    return letAttribute(node, 'style');
 };
 
 export const letText = node => {
@@ -326,7 +353,7 @@ export const setAttributes = (node, attributes) => {
     let value;
     for (let attribute in attributes) {
         value = attributes[attribute];
-        if (value || "" === value) {
+        if (value || "" === value || 0 === value) {
             setAttribute(node, attribute, value);
         } else {
             letAttribute(node, attribute);
@@ -363,7 +390,7 @@ export const setData = (node, data) => {
     let value;
     for (let datum in data) {
         value = data[datum];
-        if (value || "" === value) {
+        if (value || "" === value || 0 === value) {
             setDatum(node, datum, value);
         } else {
             letDatum(node, datum);
@@ -419,11 +446,23 @@ export const setState = (node, key, value) => {
 };
 
 export const setStyle = (node, style, value) => {
-    // TODO
+    if (isNumber(value)) {
+        value += 'px';
+    }
+    return (node.style[toCaseCamel(style)] = fromValue(value)), node;
 };
 
 export const setStyles = (node, styles) => {
-    // TODO
+    let value;
+    for (let style in styles) {
+        value = styles[style];
+        if (value || "" === value || 0 === value) {
+            setStyle(node, style, value);
+        } else {
+            letStyle(node, style);
+        }
+    }
+    return node;
 };
 
 export const setText = (node, content, trim = true) => {

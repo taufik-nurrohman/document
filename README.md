@@ -39,6 +39,8 @@ Convert element to array of element name, element content and element attributes
 
 ### getAttributes(node, parseValue = true)
 
+### getChildren(node, index)
+
 ### getClass(node)
 
 ### getClasses(node, toArray = true)
@@ -75,15 +77,17 @@ Get closest `<form>` element from current element.
 
 ### getScriptElements()
 
-### getStyle(node, style)
+### getStyle(node, style, parseValue = true)
 
-### getStyles(node, styles)
+### getStyles(node, styles, parseValue = true)
 
 ### getStyleElements()
 
 ### getState(node, state)
 
 ### getText(node, trim = true)
+
+### getType(node)
 
 ### hasParent(node)
 

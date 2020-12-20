@@ -2,9 +2,9 @@
   "author": "Taufik Nurrohman",
   "bugs": "https://github.com/taufik-nurrohman/document/issues",
   "dependencies": {
-    "@taufik-nurrohman/from": "^0.0.3",
+    "@taufik-nurrohman/from": "^0.0.4",
     "@taufik-nurrohman/is": "^0.1.0",
-    "@taufik-nurrohman/to": "^0.0.7"
+    "@taufik-nurrohman/to": "^0.0.8"
   },
   "description": "HTML document object utility.",
   "exports": {
