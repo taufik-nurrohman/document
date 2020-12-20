@@ -297,6 +297,17 @@ console.log(setElement(input, {
 
 ### setStyles(node, styles)
 
+~~~ js
+// Add `left` and `top` style(s)
+// Remove `bottom` and `right` style(s) if exist
+setStyles(node, {
+    'left': 0,
+    'top': 0,
+    'bottom': false,
+    'right': false
+});
+~~~
+
 ### setText(node)
 
 ### toElement(array)
