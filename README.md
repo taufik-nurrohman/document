@@ -20,7 +20,7 @@ console.log(setElement('div', 'Content goes here.', {
 ### ECMAScript
 
 ~~~ js
-import {setElement} = from '@taufik-nurrohman/document';
+import {setElement} from '@taufik-nurrohman/document';
 
 console.log(setElement('div', 'Content goes here.', {
     'class': 'foo bar',
@@ -85,6 +85,8 @@ Get closest `<form>` element from current element.
 
 ### getText(node, trim = true)
 
+### hasClass(node, class)
+
 ### hasParent(node)
 
 ### hasState(node)
@@ -106,15 +108,15 @@ Get closest `<form>` element from current element.
 ### letAttributes(node, attributes)
 
 ~~~ js
-// Remove all attributes
-letAttribute(node);
+// Remove all attribute(s)
+letAttributes(node);
 
 // Remove `class` and `id` attribute only
-letAttribute(node, ['class', 'id']);
+letAttributes(node, ['class', 'id']);
 
 // Remove `class` and `id` attribute only
 const removeValueAttribute = false;
-letAttribute(node, {
+letAttributes(node, {
     'class': true,
     'id': true,
     'value': removeValueAttribute // Keep this attribute
@@ -144,7 +146,7 @@ letClasses(node, {
 ### letData(node, data)
 
 ~~~ js
-// Remove all `data-*` attributes
+// Remove all `data-*` attribute(s)
 letData(node);
 
 // Remove `data-foo` and `data-bar` attribute only
@@ -186,7 +188,7 @@ letData(node, {
 ### setAttributes(node, attributes)
 
 ~~~ js
-// Add `foo` and `bar` attributes
+// Add `foo` and `bar` attribute(s)
 // Remove the `baz` attribute if exists
 setAttributes(node, {
     'foo': 1,
@@ -200,13 +202,13 @@ setAttributes(node, {
 ### setClasses(node, classes)
 
 ~~~ js
-// Set class values to `['foo', 'bar']`
+// Set class value(s) to `['foo', 'bar']`
 setClasses(node, 'foo bar');
 
-// Add `foo` and `bar` to the class values
+// Add `foo` and `bar` to the class value(s)
 setClasses(node, ['foo', 'bar']);
 
-// Add `foo` and `bar` to the class values
+// Add `foo` and `bar` to the class value(s)
 // Remove the `baz` value if exists
 setClasses(node, {
     'foo': true,
@@ -218,7 +220,7 @@ setClasses(node, {
 ### setData(node, data)
 
 ~~~ js
-// Add `data-foo` and `data-bar` attributes
+// Add `data-foo` and `data-bar` attribute(s)
 // Remove the `data-baz` attribute if exists
 setData(node, {
     'foo': 1,
@@ -252,7 +254,7 @@ console.log(setElement('input', {
 ~~~
 
 ~~~ js
-let input = queryElement('input[name="title"][type="text"]');
+let input = getElement('input[name="title"][type="text"]');
 
 console.log(setElement(input, {
     'value': 'Title Goes Here'
@@ -287,6 +289,17 @@ Get element&rsquo;s outer HTML.
 
 ### toggleState(node, state)
 
+Toggle element state if available.
+
+~~~ js
+const button = getElement('button');
+const details = getElement('details');
+
+button.addEventListener('click', () => {
+    toggleState(details, 'open');
+});
+~~~
+
 Properties
 ----------
 
@@ -309,6 +322,10 @@ Return the `<html>` element.
 ### W
 
 Return the `window` object.
+
+### location
+
+Return the `window.location` object.
 
 ### script
 

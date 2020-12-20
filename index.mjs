@@ -316,6 +316,8 @@ export const letText = node => {
     return hasState(node, state) && (node[state] = ""), node;
 };
 
+export const location = W.location;
+
 export const script = D.currentScript;
 
 export const setAttribute = (node, attribute, value) => {
