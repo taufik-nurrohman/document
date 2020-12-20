@@ -185,6 +185,22 @@ letData(node, {
 
 ### letStyles(node, styles)
 
+~~~ js
+// Remove all style(s)
+letStyles(node);
+
+// Remove `left` and `top` style only
+letStyles(node, ['left', 'top']);
+
+// Remove `left` and `top` style only
+const removePositionStyle = false;
+letStyles(node, {
+    'position': removePositionStyle, // Keep this style
+    'left': true,
+    'top': true
+});
+~~~
+
 ### letText(node)
 
 ### setAttribute(node, attribute, value)
