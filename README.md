@@ -161,7 +161,7 @@ const removeBazData = false;
 letData(node, {
     'foo': true,
     'bar': true,
-    'baz': !removeBazData // Keep this attribute
+    'baz': removeBazData // Keep this attribute
 });
 ~~~
 
