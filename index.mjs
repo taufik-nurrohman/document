@@ -186,6 +186,10 @@ export const getType = node => {
     return (node || {}).nodeType || null;
 };
 
+export const hasAttribute = (node, attribute) => {
+    return node.hasAttribute(attribute);
+};
+
 export const hasClass = (node, value) => {
     return node.classList.contains(value);
 };

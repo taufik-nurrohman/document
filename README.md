@@ -89,6 +89,8 @@ Get closest `<form>` element from current element.
 
 ### getType(node)
 
+### hasAttribute(node, attribute)
+
 ### hasClass(node, class)
 
 ### hasParent(node)
