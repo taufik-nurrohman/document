@@ -39,7 +39,11 @@ Convert element to array of element name, element content and element attributes
 
 ### getAttributes(node, parseValue = true)
 
-### getChildren(node, index)
+### getChildFirst(parent)
+
+### getChildLast(parent)
+
+### getChildren(parent, index)
 
 ### getClass(node)
 
@@ -129,6 +133,12 @@ letAttributes(node, {
 });
 ~~~
 
+### letChildFirst(parent)
+
+### letChildLast(parent)
+
+### letChildren(parent)
+
 ### letClass(node, class)
 
 ### letClasses(node, classes)
@@ -171,11 +181,7 @@ letData(node, {
 
 ### letElement(node)
 
-### letFirstChild(parent)
-
 ### letHTML(node)
-
-### letLastChild(parent)
 
 ### letNext(node)
 
@@ -218,6 +224,10 @@ setAttributes(node, {
     'baz': false
 });
 ~~~
+
+### setChildFirst(parent)
+
+### setChildLast(parent)
 
 ### setClass(node, class)
 
@@ -283,11 +293,7 @@ console.log(setElement(input, {
 }));
 ~~~
 
-### setFirstChild(parent, node)
-
 ### setHTML(node)
-
-### setLastChild(parent, node)
 
 ### setNext(parent, node)
 

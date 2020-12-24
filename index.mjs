@@ -34,8 +34,16 @@ export const getAttributes = (node, parseValue = true) => {
     return values;
 };
 
-export const getChildren = (node, index) => {
-    let children = node.children;
+export const getChildFirst = parent => {
+    return parent.firstElementChild || null;
+};
+
+export const getChildLast = parent => {
+    return parent.lastElementChild || null;
+};
+
+export const getChildren = (parent, index) => {
+    let children = parent.children;
     return isNumber(index) ? (children[index] || null) : (children || []);
 };
 
@@ -90,10 +98,6 @@ export const getFormElements = () => {
     return D.forms;
 };
 
-export const getFirstChild = node => {
-    return node.firstElementChild || null;
-};
-
 export const getHTML = (node, trim = true) => {
     let state = 'innerHTML';
     if (!hasState(node, state)) {
@@ -102,10 +106,6 @@ export const getHTML = (node, trim = true) => {
     let content = node[state];
     content = trim ? content.trim() : content;
     return "" !== content ? content : null;
-};
-
-export const getLastChild = node => {
-    return node.lastElementChild || null;
 };
 
 export const getName = node => {
@@ -249,6 +249,25 @@ export const letAttributes = (node, attributes) => {
     return node;
 };
 
+export const letChildFirst = parent => {
+    let childFirst = getChildFirst(parent);
+    return (childFirst && letElement(childFirst)), parent;
+};
+
+export const letChildLast = parent => {
+    let childLast = getChildLast(parent);
+    return (childLast && letElement(childLast)), parent;
+};
+
+export const letChildren = (parent, index) => {
+    let value = getChildren(parent, index);
+    if (isNumber(index) && value) {
+        letElement(value);
+        return parent;
+    }
+    return value.forEach(child => letElement(child)), parent;
+};
+
 export const letClass = (node, value) => {
     return node.classList.remove(value), node;
 };
@@ -293,19 +312,9 @@ export const letElement = node => {
     return node.remove(), parent;
 };
 
-export const letFirstChild = parent => {
-    let firstChild = getFirstChild(parent);
-    return (firstChild && letElement(firstChild)), parent;
-};
-
 export const letHTML = node => {
     let state = 'innerHTML';
     return hasState(node, state) && (node[state] = ""), node;
-};
-
-export const letLastChild = parent => {
-    let lastChild = getLastChild(parent);
-    return (lastChild && letElement(lastChild)), parent;
 };
 
 export const letNext = node => {
@@ -368,6 +377,14 @@ export const setAttributes = (node, attributes) => {
     return node;
 };
 
+export const setChildFirst = (parent, node) => {
+    return parent.prepend(node), node;
+};
+
+export const setChildLast = (parent, node) => {
+    return parent.append(node), node;
+};
+
 export const setClass = (node, value) => {
     return node.classList.add(value), node;
 };
@@ -426,17 +443,9 @@ export const setElement = (node, content, attributes) => {
     return node;
 };
 
-export const setFirstChild = (parent, node) => {
-    return parent.append(node), node;
-};
-
 export const setHTML = (node, content, trim = true) => {
     let state = 'innerHTML';
     return hasState(node, state) && (node[state] = trim ? content.trim() : content), node;
-};
-
-export const setLastChild = (parent, node) => {
-    return parent.prepend(node), node;
 };
 
 export const setNext = (parent, node) => {
