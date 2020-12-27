@@ -1,4 +1,4 @@
-import {fromJSON, fromValue} from '@taufik-nurrohman/from';
+import {fromJSON, fromURL, fromValue} from '@taufik-nurrohman/from';
 import {isArray, isInstance, isNumber, isObject, isString} from '@taufik-nurrohman/is';
 import {toCaseCamel, toJSON, toValue} from '@taufik-nurrohman/to';
 
@@ -52,6 +52,26 @@ export const getClass = node => getClasses(node, false); // Dummy
 export const getClasses = (node, toArray = true) => {
     let value = node.className.trim();
     return toArray ? value.split(/\s+/) : value;
+};
+
+export const getCookie = (cookie, parseValue = true) => {
+    let value = getCookies(parseValue)[cookie];
+    return value || "" === value || 0 === value ? value : null;
+};
+
+export const getCookies = (parseValue = true) => {
+    if (theCookies) {
+        // Generate from cache
+        return parseValue ? toValue(theCookies) : theCookies;
+    }
+    let values = {};
+    D.cookie.split(/;\s*/).forEach(cookie => {
+        let a = cookie.split('='),
+            value = a[1];
+        values[a[0]] = value ? fromURL(value) : null;
+    });
+    theCookies = values; // Store to cache
+    return parseValue ? toValue(values) : values;
 };
 
 export const getData = (node, parseValue = true) => {
@@ -288,6 +308,24 @@ export const letClasses = (node, classes) => {
     return (node.className = ""), node;
 };
 
+export const letCookie = cookie => {
+    setCookie(cookie, "", -1);
+};
+
+export const letCookies = cookies => {
+    if (isArray(cookies)) {
+        cookies.forEach(cookie => letCookie(cookie));
+        return;
+    }
+    if (isObject(cookies || cookies = getCookies(false))) {
+        for (let cookie in cookies) {
+            if (cookies[cookie]) {
+                letCookie(cookie);
+            }
+        }
+    }
+};
+
 export const letData = (node, data) => {
     if (isArray(data)) {
         data.forEach(datum => letAttribute(node, 'data-' + datum));
@@ -409,6 +447,25 @@ export const setClasses = (node, classes) => {
     return node;
 };
 
+export const setCookie = (cookie, value, days = 1) => {
+    const date = new Date;
+    date.setTime(date.getTime() + 24 * 60 * 60 * 1000 * days);
+    D.cookie = cookie + '=' + fromValue(value) + ';path=/;expires=' + date.toGMTString();
+    theCookies = 0; // Reset cache
+};
+
+export const setCookies = (cookies, days = 1) => {
+    let value;
+    for (let cookie in cookies) {
+        value = cookies[cookie];
+        if (value || "" === value || 0 === value) {
+            setCookie(cookie, value, days);
+        } else {
+            letCookie(cookie);
+        }
+    }
+};
+
 export const setData = (node, data) => {
     let value;
     for (let datum in data) {
@@ -500,3 +557,5 @@ export const toString = node => {
 export const toggleState = (node, state) => {
     return hasState(node, state) && (node[state] = !node[state]), node;
 };
+
+let theCookies = 0;

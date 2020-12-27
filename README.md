@@ -49,6 +49,10 @@ Convert element to array of element name, element content and element attributes
 
 ### getClasses(node, toArray = true)
 
+### getCookie(cookie, parseValue = true)
+
+### getCookies(parseValue = true)
+
 ### getData(node, parseValue = true)
 
 ### getDatum(node, datum, parseValue = true)
@@ -159,6 +163,10 @@ letClasses(node, {
 });
 ~~~
 
+### letCookie(cookie)
+
+### letCookies(cookies)
+
 ### letData(node, data)
 
 ~~~ js
@@ -248,6 +256,10 @@ setClasses(node, {
     'baz': false
 });
 ~~~
+
+### setCookie(cookie, value, days = 1)
+
+### setCookies(cookies, days = 1)
 
 ### setData(node, data)
 
