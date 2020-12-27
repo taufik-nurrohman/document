@@ -374,6 +374,10 @@ Return the `<html>` element.
 
 Return the `window` object.
 
+### history
+
+Return the `window.history` object.
+
 ### location
 
 Return the `window.location` object.

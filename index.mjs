@@ -222,6 +222,8 @@ export const hasState = (node, state) => {
     return state in node;
 };
 
+export const history = W.history;
+
 export const isComment = node => {
     return isNode(node) && /* Node.COMMENT_NODE */ 8 === getType(node);
 };
