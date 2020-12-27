@@ -261,7 +261,10 @@ export const letAttributes = (node, attributes) => {
         attributes.forEach(attribute => letAttribute(node, attribute));
         return node;
     }
-    if (isObject(attributes || attributes = getAttributes(node, false))) {
+    if (!attributes) {
+        attributes = getAttributes(node, false);
+    }
+    if (isObject(attributes)) {
         for (let attribute in attributes) {
             if (attributes[attribute]) {
                 letAttribute(node, attribute);
@@ -319,7 +322,10 @@ export const letCookies = cookies => {
         cookies.forEach(cookie => letCookie(cookie));
         return;
     }
-    if (isObject(cookies || cookies = getCookies(false))) {
+    if (!cookies) {
+        cookies = getCookies(false);
+    }
+    if (isObject(cookies)) {
         for (let cookie in cookies) {
             if (cookies[cookie]) {
                 letCookie(cookie);
@@ -333,7 +339,10 @@ export const letData = (node, data) => {
         data.forEach(datum => letAttribute(node, 'data-' + datum));
         return node;
     }
-    if (isObject(data || data = getData(node, false))) {
+    if (!data) {
+        data = getData(node, false);
+    }
+    if (isObject(data)) {
         for (let datum in data) {
             if (data[datum]) {
                 letAttribute(node, 'data-' + datum);
