@@ -507,12 +507,12 @@ export const setHTML = (node, content, trim = true) => {
     return hasState(node, state) && (node[state] = trim ? content.trim() : content), node;
 };
 
-export const setNext = (parent, node) => {
-    return getParent(parent).insertBefore(node, getNext(parent)), node;
+export const setNext = (current, node) => {
+    return getParent(current).insertBefore(node, getNext(current)), node;
 };
 
-export const setPrev = (parent, node) => {
-    return getParent(parent).insertBefore(node, parent), node;
+export const setPrev = (current, node) => {
+    return getParent(current).insertBefore(node, current), node;
 };
 
 export const setState = (node, key, value) => {

@@ -307,9 +307,9 @@ console.log(setElement(input, {
 
 ### setHTML(node)
 
-### setNext(parent, node)
+### setNext(current, node)
 
-### setPrev(parent, node)
+### setPrev(current, node)
 
 ### setState(node, state, value)
 
