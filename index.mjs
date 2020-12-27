@@ -222,8 +222,6 @@ export const hasState = (node, state) => {
     return state in node;
 };
 
-export const history = W.history;
-
 export const isComment = node => {
     return isNode(node) && /* Node.COMMENT_NODE */ 8 === getType(node);
 };
@@ -405,10 +403,6 @@ export const letText = node => {
     return hasState(node, state) && (node[state] = ""), node;
 };
 
-export const location = W.location;
-
-export const script = D.currentScript;
-
 export const setAttribute = (node, attribute, value) => {
     return node.setAttribute(attribute, fromValue(value)), node;
 };
@@ -570,3 +564,9 @@ export const toggleState = (node, state) => {
 };
 
 let theCookies = 0;
+
+export const theHistory = W.history;
+
+export const theLocation = W.location;
+
+export const theScript = D.currentScript;

@@ -374,14 +374,14 @@ Return the `<html>` element.
 
 Return the `window` object.
 
-### history
+### theHistory
 
 Return the `window.history` object.
 
-### location
+### theLocation
 
 Return the `window.location` object.
 
-### script
+### theScript
 
 Return the current `<script>` element.
