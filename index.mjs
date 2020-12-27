@@ -494,7 +494,7 @@ export const setElement = (node, content, attributes) => {
         content = false;
     }
     if (isString(content)) {
-        setInnerHTML(node, content);
+        setHTML(node, content);
     }
     if (isObject(attributes)) {
         setAttributes(node, attributes);
