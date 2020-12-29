@@ -111,6 +111,8 @@ Get closest `<form>` element from current element.
 
 ### isElement(node)
 
+### isNode(node)
+
 ### isParent(node, parent)
 
 ### isText(node)
@@ -338,6 +340,10 @@ Convert array of element name, element content and element attributes to element
 
 Get element&rsquo;s outer HTML.
 
+### toggleClass(node, class)
+
+### toggleClasses(node, classes)
+
 ### toggleState(node, state)
 
 Toggle element state if available.
@@ -350,6 +356,8 @@ button.addEventListener('click', () => {
     toggleState(details, 'open');
 });
 ~~~
+
+### toggleStates(node, states)
 
 Properties
 ----------

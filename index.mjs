@@ -1,6 +1,6 @@
 import {fromJSON, fromURL, fromValue} from '@taufik-nurrohman/from';
 import {isArray, isInstance, isNumber, isObject, isString} from '@taufik-nurrohman/is';
-import {toCaseCamel, toJSON, toValue} from '@taufik-nurrohman/to';
+import {toCaseCamel, toCaseLower, toJSON, toValue} from '@taufik-nurrohman/to';
 
 export const D = document;
 export const W = window;
@@ -67,7 +67,7 @@ export const getCookies = (parseValue = true) => {
     let values = {};
     D.cookie.split(/;\s*/).forEach(cookie => {
         let a = cookie.split('='),
-            value = a[1];
+            value = a[1] || "";
         values[a[0]] = value ? fromURL(value) : null;
     });
     theCookies = values; // Store to cache
@@ -129,7 +129,8 @@ export const getHTML = (node, trim = true) => {
 };
 
 export const getName = node => {
-    return ((node || {}).nodeName || "").toLowerCase() || null;
+    let name = toCaseLower(node.nodeName || "");
+    return "" !== name ? name : null;
 };
 
 export const getNext = node => {
@@ -203,7 +204,7 @@ export const getText = (node, trim = true) => {
 };
 
 export const getType = node => {
-    return (node || {}).nodeType || null;
+    return node.nodeType || null;
 };
 
 export const hasAttribute = (node, attribute) => {
@@ -255,18 +256,19 @@ export const letAttribute = (node, attribute) => {
 };
 
 export const letAttributes = (node, attributes) => {
-    if (isArray(attributes)) {
-        attributes.forEach(attribute => letAttribute(node, attribute));
-        return node;
-    }
     if (!attributes) {
         attributes = getAttributes(node, false);
+        for (let attribute in attributes) {
+            letAttribute(node, attribute);
+        }
+        return node;
+    }
+    if (isArray(attributes)) {
+        return attributes.forEach(attribute => letAttribute(node, attribute)), node;
     }
     if (isObject(attributes)) {
         for (let attribute in attributes) {
-            if (attributes[attribute]) {
-                letAttribute(node, attribute);
-            }
+            attributes[attribute] && letAttribute(node, attribute);
         }
     }
     return node;
@@ -285,8 +287,7 @@ export const letChildLast = parent => {
 export const letChildren = (parent, index) => {
     let value = getChildren(parent, index);
     if (isNumber(index) && value) {
-        letElement(value);
-        return parent;
+        return letElement(value), parent;
     }
     return value.forEach(child => letElement(child)), parent;
 };
@@ -297,14 +298,11 @@ export const letClass = (node, value) => {
 
 export const letClasses = (node, classes) => {
     if (isArray(classes)) {
-        classes.forEach(value => node.classList.remove(value));
-        return node;
+        return classes.forEach(name => node.classList.remove(name)), node;
     }
     if (isObject(classes)) {
-        for (let key in classes) {
-            if (classes[key]) {
-                node.classList.remove(value);
-            }
+        for (let name in classes) {
+            classes[name] && node.classList.remove(name);
         }
         return node;
     }
@@ -316,35 +314,38 @@ export const letCookie = cookie => {
 };
 
 export const letCookies = cookies => {
+    if (!cookies) {
+        cookies = getCookies(false);
+        for (let cookie in cookies) {
+            letCookie(cookie);
+        }
+        return;
+    }
     if (isArray(cookies)) {
         cookies.forEach(cookie => letCookie(cookie));
         return;
     }
-    if (!cookies) {
-        cookies = getCookies(false);
-    }
     if (isObject(cookies)) {
         for (let cookie in cookies) {
-            if (cookies[cookie]) {
-                letCookie(cookie);
-            }
+            cookies[cookie] && letCookie(cookie);
         }
     }
 };
 
 export const letData = (node, data) => {
-    if (isArray(data)) {
-        data.forEach(datum => letAttribute(node, 'data-' + datum));
-        return node;
-    }
     if (!data) {
         data = getData(node, false);
+        for (let datum in data) {
+            letAttribute(node, 'data-' + datum);
+        }
+        return node;
+    }
+    if (isArray(data)) {
+        return data.forEach(datum => letAttribute(node, 'data-' + datum)), node;
     }
     if (isObject(data)) {
         for (let datum in data) {
-            if (data[datum]) {
-                letAttribute(node, 'data-' + datum);
-            }
+            data[datum] && letAttribute(node, 'data-' + datum);
         }
     }
     return node;
@@ -378,24 +379,39 @@ export const letState = (node, state) => {
     return (delete node[state]), node;
 };
 
+export const letStates = (node, states) => {
+    if (!states) {
+        // Do nothing.
+        return node;
+    }
+    if (isArray(states)) {
+        return states.forEach(state => letState(node, state)), node;
+    }
+    if (isObject(states)) {
+        for (let state in states) {
+            states[state] && letState(node, state);
+        }
+    }
+    return node;
+};
+
 export const letStyle = (node, style) => {
     return (node.style[toCaseCamel(style)] = null), node;
 };
 
 export const letStyles = (node, styles) => {
+    if (!styles) {
+        return letAttribute(node, 'style');
+    }
     if (isArray(styles)) {
-        styles.forEach(style => letStyle(node, style));
-        return node;
+        return styles.forEach(style => letStyle(node, style)), node;
     }
     if (isObject(styles)) {
         for (let style in styles) {
-            if (styles[style]) {
-                letStyle(node, style);
-            }
+            styles[style] && letStyle(node, style);
         }
-        return node;
     }
-    return letAttribute(node, 'style');
+    return node;
 };
 
 export const letText = node => {
@@ -404,6 +420,9 @@ export const letText = node => {
 };
 
 export const setAttribute = (node, attribute, value) => {
+    if (true === value) {
+        value = attribute;
+    }
     return node.setAttribute(attribute, fromValue(value)), node;
 };
 
@@ -434,15 +453,14 @@ export const setClass = (node, value) => {
 
 export const setClasses = (node, classes) => {
     if (isArray(classes)) {
-        classes.forEach(value => node.classList.add(value));
-        return node;
+        return classes.forEach(name => node.classList.add(name)), node;
     }
     if (isObject(classes)) {
-        for (let key in classes) {
-            if (classes[key]) {
-                node.classList.add(key);
+        for (let name in classes) {
+            if (classes[name]) {
+                node.classList.add(name);
             } else {
-                node.classList.remove(key);
+                node.classList.remove(name);
             }
         }
     }
@@ -481,6 +499,7 @@ export const setData = (node, data) => {
             letDatum(node, datum);
         }
     }
+    return node;
 };
 
 export const setDatum = (node, datum, value) => {
@@ -522,6 +541,19 @@ export const setState = (node, key, value) => {
     return (node[key] = value), node;
 };
 
+export const setStates = (node, states) => {
+    let value;
+    for (let state in states) {
+        value = states[state];
+        if (value || "" === value || 0 === value) {
+            setState(node, state, states[state]);
+        } else {
+            letState(node, state);
+        }
+    }
+    return node;
+};
+
 export const setStyle = (node, style, value) => {
     if (isNumber(value)) {
         value += 'px';
@@ -559,8 +591,36 @@ export const toString = node => {
     return node[state] || "";
 };
 
+export const toggleClass = (node, name) => {
+    return node.classList.toggle(name), node;
+};
+
+export const toggleClasses = (node, classes) => {
+    if (isArray(classes)) {
+        return classes.forEach(name => toggleClass(node, name)), node;
+    }
+    if (isObject(classes)) {
+        for (let name in classes) {
+            classes[name] && toggleClass(node, name);
+        }
+    }
+    return node;
+};
+
 export const toggleState = (node, state) => {
     return hasState(node, state) && (node[state] = !node[state]), node;
+};
+
+export const toggleStates = (node, states) => {
+    if (isArray(states)){
+        return states.forEach(state => toggleState(node, state)), node;
+    }
+    if (isObject(states)) {
+        for (let state in states) {
+            states[state] && toggleState(node, state);
+        }
+    }
+    return node;
 };
 
 let theCookies = 0;
