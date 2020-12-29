@@ -145,11 +145,12 @@ export const getParentForm = node => {
     if (hasState(node, state) && state === getName(node[state])) {
         return node[state];
     }
-    let parent;
-    while (parent = getParent(parent)) {
+    let parent = getParent(node);
+    while (parent) {
         if (state === getName(parent)) {
             break;
         }
+        parent = getParent(parent);
     }
     return parent || null;
 };
