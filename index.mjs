@@ -50,7 +50,7 @@ export const getChildren = (parent, index) => {
 export const getClass = node => getClasses(node, false); // Dummy
 
 export const getClasses = (node, toArray = true) => {
-    let value = node.className.trim();
+    let value = (getState(node, 'className') || "").trim();
     return toArray ? value.split(/\s+/) : value;
 };
 
@@ -86,11 +86,10 @@ export const getData = (node, parseValue = true) => {
 
 export const getDatum = (node, datum, parseValue = true) => {
     let value = getAttribute(node, 'data-' + datum, parseValue),
-        v = value.trim();
+        v = (value + "").trim();
     if (
         parseValue &&
         v &&
-        isString(v) &&
         (
             '[' === v[0] && ']' === v.slice(-1) ||
             '{' === v[0] && '}' === v.slice(-1)
@@ -525,6 +524,9 @@ export const setElement = (node, content, attributes) => {
 };
 
 export const setHTML = (node, content, trim = true) => {
+    if (null === content) {
+        return node;
+    }
     let state = 'innerHTML';
     return hasState(node, state) && (node[state] = trim ? content.trim() : content), node;
 };
@@ -575,6 +577,9 @@ export const setStyles = (node, styles) => {
 };
 
 export const setText = (node, content, trim = true) => {
+    if (null === content) {
+        return node;
+    }
     let state = 'textContent';
     return hasState(node, state) && (node[state] = trim ? content.trim() : content), node;
 };
