@@ -129,8 +129,7 @@ export const getHTML = (node, trim = true) => {
 };
 
 export const getName = node => {
-    let name = toCaseLower(node.nodeName || "");
-    return "" !== name ? name : null;
+    return toCaseLower(node && node.nodeName || "") || null;
 };
 
 export const getNext = node => {
@@ -204,7 +203,7 @@ export const getText = (node, trim = true) => {
 };
 
 export const getType = node => {
-    return node.nodeType || null;
+    return node && node.nodeType || null;
 };
 
 export const hasAttribute = (node, attribute) => {
