@@ -4,7 +4,7 @@
   "dependencies": {
     "@taufik-nurrohman/from": "^0.0.5",
     "@taufik-nurrohman/is": "^0.1.0",
-    "@taufik-nurrohman/to": "^0.0.15"
+    "@taufik-nurrohman/to": "^0.0.16"
   },
   "description": "HTML document object utility.",
   "exports": {
@@ -28,5 +28,5 @@
     "type": "git",
     "url": "git+https://github.com/taufik-nurrohman/document.git"
   },
-  "version": "0.1.4"
+  "version": "0.1.5"
 }
