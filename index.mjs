@@ -418,6 +418,17 @@ export const letText = node => {
     return hasState(node, state) && (node[state] = ""), node;
 };
 
+export const replaceClass = (node, from, to) => {
+    return node.classList.replace(from, to), node;
+};
+
+export const replaceClasses = (node, classes) => {
+    for (let name in classes) {
+        replaceClass(node, name, classes[name]);
+    }
+    return node;
+};
+
 export const setAttribute = (node, attribute, value) => {
     if (true === value) {
         value = attribute;
@@ -596,17 +607,17 @@ export const toString = node => {
     return node[state] || "";
 };
 
-export const toggleClass = (node, name) => {
-    return node.classList.toggle(name), node;
+export const toggleClass = (node, name, force) => {
+    return node.classList.toggle(name, force), node;
 };
 
-export const toggleClasses = (node, classes) => {
+export const toggleClasses = (node, classes, force) => {
     if (isArray(classes)) {
-        return classes.forEach(name => toggleClass(node, name)), node;
+        return classes.forEach(name => toggleClass(node, name, force)), node;
     }
     if (isObject(classes)) {
         for (let name in classes) {
-            classes[name] && toggleClass(node, name);
+            classes[name] && toggleClass(node, name, force);
         }
     }
     return node;

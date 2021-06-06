@@ -221,6 +221,10 @@ letStyles(node, {
 
 ### letText(node)
 
+### replaceClass(node, from, to)
+
+### replaceClasses(node, classes)
+
 ### setAttribute(node, attribute, value)
 
 ### setAttributes(node, attributes)
@@ -340,9 +344,9 @@ Convert array of element name, element content and element attributes to element
 
 Get element&rsquo;s outer HTML.
 
-### toggleClass(node, class)
+### toggleClass(node, class, force)
 
-### toggleClasses(node, classes)
+### toggleClasses(node, classes, force)
 
 ### toggleState(node, state)
 
