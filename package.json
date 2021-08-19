@@ -2,7 +2,7 @@
   "author": "Taufik Nurrohman",
   "bugs": "https://github.com/taufik-nurrohman/document/issues",
   "dependencies": {
-    "@taufik-nurrohman/from": "^0.0.8",
+    "@taufik-nurrohman/from": "^0.0.9",
     "@taufik-nurrohman/is": "^0.1.2",
     "@taufik-nurrohman/to": "^0.0.18"
   },
@@ -28,5 +28,5 @@
     "type": "git",
     "url": "git+https://github.com/taufik-nurrohman/document.git"
   },
-  "version": "0.1.9"
+  "version": "0.1.10"
 }
