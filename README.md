@@ -153,15 +153,15 @@ letAttributes(node, {
 // Remove all class(es)
 letClasses(node);
 
-// Remove `foo` and `bar` class only
-letClasses(node, ['foo', 'bar']);
+// Remove `bar` and `foo` class only
+letClasses(node, ['bar', 'foo']);
 
-// Remove `foo` and `bar` class only
+// Remove `bar` and `foo` class only
 const isButtonDisabled = false;
 letClasses(node, {
     'active': isButtonDisabled, // Keep this class
-    'foo': true,
-    'bar': true
+    'bar': true,
+    'foo': true
 });
 ~~~
 
@@ -175,15 +175,15 @@ letClasses(node, {
 // Remove all `data-*` attribute(s)
 letData(node);
 
-// Remove `data-foo` and `data-bar` attribute only
-letData(node, ['foo', 'bar']);
+// Remove `data-bar` and `data-foo` attribute only
+letData(node, ['bar', 'foo']);
 
-// Remove `data-foo` and `data-bar` attribute only
+// Remove `data-bar` and `data-foo` attribute only
 const removeBazData = false;
 letData(node, {
-    'foo': true,
     'bar': true,
-    'baz': removeBazData // Keep this attribute
+    'baz': removeBazData, // Keep this attribute
+    'foo': true
 });
 ~~~
 
@@ -213,8 +213,8 @@ letStyles(node, ['left', 'top']);
 // Remove `left` and `top` style only
 const removePositionStyle = false;
 letStyles(node, {
-    'position': removePositionStyle, // Keep this style
     'left': true,
+    'position': removePositionStyle, // Keep this style
     'top': true
 });
 ~~~
@@ -230,12 +230,12 @@ letStyles(node, {
 ### setAttributes(node, attributes)
 
 ~~~ js
-// Add `foo` and `bar` attribute(s)
+// Add `bar` and `foo` attribute(s)
 // Remove the `baz` attribute if exists
 setAttributes(node, {
-    'foo': 1,
     'bar': 100,
-    'baz': false
+    'baz': false,
+    'foo': 1
 });
 ~~~
 
@@ -248,18 +248,18 @@ setAttributes(node, {
 ### setClasses(node, classes)
 
 ~~~ js
-// Set class value(s) to `['foo', 'bar']`
-setClasses(node, 'foo bar');
+// Set class value(s) to `['bar', 'foo']`
+setClasses(node, 'bar foo');
 
-// Add `foo` and `bar` to the class value(s)
-setClasses(node, ['foo', 'bar']);
+// Add `bar` and `foo` to the class value(s)
+setClasses(node, ['bar', 'foo']);
 
-// Add `foo` and `bar` to the class value(s)
+// Add `bar` and `foo` to the class value(s)
 // Remove the `baz` value if exists
 setClasses(node, {
-    'foo': true,
     'bar': true,
-    'baz': false
+    'baz': false,
+    'foo': true
 });
 ~~~
 
@@ -270,12 +270,12 @@ setClasses(node, {
 ### setData(node, data)
 
 ~~~ js
-// Add `data-foo` and `data-bar` attribute(s)
+// Add `data-bar` and `data-foo` attribute(s)
 // Remove the `data-baz` attribute if exists
 setData(node, {
-    'foo': 1,
     'bar': 100,
-    'baz': false
+    'baz': false,
+    'foo': 1
 });
 ~~~
 
@@ -327,10 +327,10 @@ console.log(setElement(input, {
 // Add `left` and `top` style(s)
 // Remove `bottom` and `right` style(s) if exist
 setStyles(node, {
-    'left': 0,
-    'top': 0,
     'bottom': false,
-    'right': false
+    'left': 0,
+    'right': false,
+    'top': 0
 });
 ~~~
 
