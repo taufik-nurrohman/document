@@ -6,13 +6,13 @@ HTML document object utility.
 Usage
 -----
 
-### CommonJS (TODO)
+### CommonJS
 
 ~~~ js
 const {setElement} = require('@taufik-nurrohman/document');
 
 console.log(setElement('div', 'Content goes here.', {
-    'class': 'foo bar',
+    'class': 'bar foo',
     'id': 'baz'
 }));
 ~~~
@@ -23,7 +23,7 @@ console.log(setElement('div', 'Content goes here.', {
 import {setElement} from '@taufik-nurrohman/document';
 
 console.log(setElement('div', 'Content goes here.', {
-    'class': 'foo bar',
+    'class': 'bar foo',
     'id': 'baz'
 }));
 ~~~
@@ -73,7 +73,7 @@ Get element name.
 
 ### getNext(node)
 
-### getParent(node)
+### getParent(node, query)
 
 Get element&rsquo;s parent.
 
@@ -101,7 +101,7 @@ Get closest `<form>` element from current element.
 
 ### hasClass(node, class)
 
-### hasParent(node)
+### hasParent(node, query)
 
 ### hasState(node)
 
@@ -113,7 +113,7 @@ Get closest `<form>` element from current element.
 
 ### isNode(node)
 
-### isParent(node, parent)
+### isParent(node, parent, query)
 
 ### isText(node)
 

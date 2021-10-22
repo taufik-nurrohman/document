@@ -135,7 +135,10 @@ export const getNext = node => {
     return node.nextElementSibling || null;
 };
 
-export const getParent = node => {
+export const getParent = (node, query) => {
+    if (query) {
+        return node.closest(query) || null;
+    }
     return node.parentNode || null;
 };
 
@@ -144,14 +147,7 @@ export const getParentForm = node => {
     if (hasState(node, state) && state === getName(node[state])) {
         return node[state];
     }
-    let parent = getParent(node);
-    while (parent) {
-        if (state === getName(parent)) {
-            break;
-        }
-        parent = getParent(parent);
-    }
-    return parent || null;
+    return getParent(node, state);
 };
 
 export const getPrev = node => {
@@ -214,8 +210,8 @@ export const hasClass = (node, value) => {
     return node.classList.contains(value);
 };
 
-export const hasParent = node => {
-    return null !== getParent(node);
+export const hasParent = (node, query) => {
+    return null !== getParent(node, query);
 };
 
 export const hasState = (node, state) => {
@@ -238,8 +234,8 @@ export const isNode = node => {
     return isInstance(node, Node);
 };
 
-export const isParent = (node, parent) => {
-    return node && parent && parent === getParent(node);
+export const isParent = (node, parent, query) => {
+    return node && parent && parent === getParent(node, query);
 };
 
 export const isText = node => {
