@@ -51,7 +51,7 @@ const getClass = node => getClasses(node, false); // Dummy
 
 const getClasses = (node, toArray = true) => {
     let value = (getState(node, 'className') || "").trim();
-    return toArray ? value.split(/\s+/) : value;
+    return toArray ? value.split(/\s+/).filter(v => "" !== v) : value;
 };
 
 const getCookie = (cookie, parseValue = true) => {
