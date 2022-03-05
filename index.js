@@ -131,8 +131,8 @@ const getName = node => {
     return toCaseLower(node && node.nodeName || "") || null;
 };
 
-const getNext = node => {
-    return node.nextElementSibling || null;
+const getNext = (node, anyNode) => {
+    return node['next' + (anyNode ? "" : 'Element') + 'Sibling'] || null;
 };
 
 const getParent = (node, query) => {
@@ -150,8 +150,8 @@ const getParentForm = node => {
     return getParent(node, state);
 };
 
-const getPrev = node => {
-    return node.previousElementSibling || null;
+const getPrev = (node, anyNode) => {
+    return node['previous' + (anyNode ? "" : 'Element') + 'Sibling'] || null;
 };
 
 const getScriptElements = () => {
@@ -539,7 +539,7 @@ const setHTML = (node, content, trim = true) => {
 };
 
 const setNext = (current, node) => {
-    return getParent(current).insertBefore(node, getNext(current)), node;
+    return getParent(current).insertBefore(node, getNext(current, true)), node;
 };
 
 const setPrev = (current, node) => {

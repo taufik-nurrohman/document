@@ -71,7 +71,7 @@ Convert element to array of element name, element content and element attributes
 
 Get element name.
 
-### getNext(node)
+### getNext(node, anyNode)
 
 ### getParent(node, query)
 
@@ -81,7 +81,7 @@ Get element&rsquo;s parent.
 
 Get closest `<form>` element from current element.
 
-### getPrev(node)
+### getPrev(node, anyNode)
 
 ### getScriptElements()
 
