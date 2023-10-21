@@ -239,9 +239,9 @@ setAttributes(node, {
 });
 ~~~
 
-### setChildFirst(parent)
+### setChildFirst(parent, node)
 
-### setChildLast(parent)
+### setChildLast(parent, node)
 
 ### setClass(node, class)
 
