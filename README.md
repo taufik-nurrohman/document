@@ -103,7 +103,7 @@ Get closest `<form>` element from current element.
 
 ### hasParent(node, query)
 
-### hasState(node)
+### hasState(node, state)
 
 ### isComment(node)
 
