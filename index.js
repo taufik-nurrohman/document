@@ -34,6 +34,10 @@ const getAttributes = (node, parseValue = true) => {
     return values;
 };
 
+const getChild = (parent, index) => {
+    return getChildren(parent, index || 0);
+};
+
 const getChildFirst = parent => {
     return parent.firstElementChild || null;
 };
@@ -43,8 +47,8 @@ const getChildLast = parent => {
 };
 
 const getChildren = (parent, index) => {
-    let children = parent.children;
-    return isNumber(index) ? (children[index] || null) : (children || []);
+    let children = [].slice.call(parent.children);
+    return isNumber(index) ? (children[index] || null) : children;
 };
 
 const getClass = node => getClasses(node, false); // Dummy
@@ -103,6 +107,17 @@ const getDatum = (node, datum, parseValue = true) => {
 
 const getElement = (query, scope) => {
     return (scope || D).querySelector(query);
+};
+
+const getElementIndex(node, anyNode) {
+    if (!node || !getParent(node)) {
+        return -1;
+    }
+    let index = 0;
+    while (node = getPrev(node, anyNode)) {
+        ++index;
+    }
+    return index;
 };
 
 const getElements = (query, scope) => {
@@ -644,10 +659,11 @@ const theLocation = W.location;
 const theScript = D.currentScript;
 
 Object.assign(exports, {
-    D, W, B, H, R,
+    B, D, H, R, W,
     fromElement,
     getAttribute,
     getAttributes,
+    getChild,
     getChildFirst,
     getChildLast,
     getChildren,
@@ -658,6 +674,7 @@ Object.assign(exports, {
     getData,
     getDatum,
     getElement,
+    getElementIndex,
     getElements,
     getFormElement,
     getFormElements,

@@ -34,6 +34,10 @@ export const getAttributes = (node, parseValue = true) => {
     return values;
 };
 
+export const getChild = (parent, index) => {
+    return getChildren(parent, index || 0);
+};
+
 export const getChildFirst = parent => {
     return parent.firstElementChild || null;
 };
@@ -43,8 +47,8 @@ export const getChildLast = parent => {
 };
 
 export const getChildren = (parent, index) => {
-    let children = parent.children;
-    return isNumber(index) ? (children[index] || null) : (children || []);
+    let children = [].slice.call(parent.children);
+    return isNumber(index) ? (children[index] || null) : children;
 };
 
 export const getClass = node => getClasses(node, false); // Dummy
@@ -103,6 +107,17 @@ export const getDatum = (node, datum, parseValue = true) => {
 
 export const getElement = (query, scope) => {
     return (scope || D).querySelector(query);
+};
+
+export const getElementIndex(node, anyNode) {
+    if (!node || !getParent(node)) {
+        return -1;
+    }
+    let index = 0;
+    while (node = getPrev(node, anyNode)) {
+        ++index;
+    }
+    return index;
 };
 
 export const getElements = (query, scope) => {

@@ -39,6 +39,8 @@ Convert element to array of element name, element content and element attributes
 
 ### getAttributes(node, parseValue = true)
 
+### getChild(parent, index = 0)
+
 ### getChildFirst(parent)
 
 ### getChildLast(parent)
@@ -58,6 +60,8 @@ Convert element to array of element name, element content and element attributes
 ### getDatum(node, datum, parseValue = true)
 
 ### getElement(query, scope = document)
+
+### getElementIndex(node, anyNode)
 
 ### getElements(query, scope = document)
 
