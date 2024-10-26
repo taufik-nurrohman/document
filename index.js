@@ -109,7 +109,7 @@ const getElement = (query, scope) => {
     return (scope || D).querySelector(query);
 };
 
-const getElementIndex(node, anyNode) {
+const getElementIndex = (node, anyNode) => {
     if (!node || !getParent(node)) {
         return -1;
     }
