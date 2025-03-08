@@ -2,6 +2,16 @@ import {fromJSON, fromURL, fromValue} from '@taufik-nurrohman/from';
 import {isArray, isInstance, isNumber, isObject, isString} from '@taufik-nurrohman/is';
 import {toCaseCamel, toCaseLower, toJSON, toValue} from '@taufik-nurrohman/to';
 
+function forEachArray(array, then) {
+    array.forEach(then);
+}
+
+function forEachObject(object, then) {
+    for (let k in object) {
+        then(object[k], k);
+    }
+}
+
 export const D = document;
 export const W = window;
 
@@ -69,10 +79,9 @@ export const getCookies = (parseValue = true) => {
         return parseValue ? toValue(theCookies) : theCookies;
     }
     let values = {};
-    D.cookie.split(/;\s*/).forEach(cookie => {
-        let a = cookie.split('='),
-            value = a[1] || "";
-        values[a[0]] = value ? fromURL(value) : null;
+    forEachArray(D.cookie.split(/;\s*/), cookie => {
+        let [k, v] = cookie.split('=');
+        values[k] = v ? fromURL(v) : null;
     });
     theCookies = values; // Store to cache
     return parseValue ? toValue(values) : values;
@@ -80,11 +89,11 @@ export const getCookies = (parseValue = true) => {
 
 export const getData = (node, parseValue = true) => {
     let attributes = getAttributes(node, parseValue);
-    for (let attribute in attributes) {
-        if ('data-' !== attribute.slice(0, 5)) {
-            delete attributes[attribute];
+    forEachObject(attributes, (v, k) => {
+        if ('data-' !== k.slice(0, 5)) {
+            delete attributes[k];
         }
-    }
+    });
     return attributes;
 };
 
@@ -185,10 +194,10 @@ export const getStyles = (node, styles, parseValue = true) => {
     let properties = W.getComputedStyle(node),
         values = {};
     if (isArray(styles)) {
-        let value;
-        styles.forEach(style => {
-            value = properties.getPropertyValue(style);
-            values[style] = parseValue ? toValue(value) : value;
+        let v;
+        forEachArray(styles, k => {
+            v = properties.getPropertyValue(k);
+            values[k] = parseValue ? toValue(v) : v;
         });
         return values;
     }
@@ -268,18 +277,13 @@ export const letAttribute = (node, attribute) => {
 export const letAttributes = (node, attributes) => {
     if (!attributes) {
         attributes = getAttributes(node, false);
-        for (let attribute in attributes) {
-            letAttribute(node, attribute);
-        }
-        return node;
+        return forEachObject(attributes, (v, k) => letAttribute(node, k)), node;
     }
     if (isArray(attributes)) {
-        return attributes.forEach(attribute => letAttribute(node, attribute)), node;
+        return forEachArray(attributes, k => letAttribute(node, k)), node;
     }
     if (isObject(attributes)) {
-        for (let attribute in attributes) {
-            attributes[attribute] && letAttribute(node, attribute);
-        }
+        return forEachObject(attributes, (v, k) => v && letAttribute(node, k)), node;
     }
     return node;
 };
@@ -299,7 +303,7 @@ export const letChildren = (parent, index) => {
     if (isNumber(index) && value) {
         return letElement(value), parent;
     }
-    return value.forEach(child => letElement(child)), parent;
+    return forEachArray(value, k => letElement(k)), parent;
 };
 
 export const letClass = (node, value) => {
@@ -308,13 +312,10 @@ export const letClass = (node, value) => {
 
 export const letClasses = (node, classes) => {
     if (isArray(classes)) {
-        return classes.forEach(name => node.classList.remove(name)), node;
+        return forEachArray(classes, k => letClass(node, k)), node;
     }
     if (isObject(classes)) {
-        for (let name in classes) {
-            classes[name] && node.classList.remove(name);
-        }
-        return node;
+        return forEachObject(classes => (v, k) => v && letClass(node, k)), node;
     }
     return (node.className = ""), node;
 };
@@ -326,37 +327,27 @@ export const letCookie = cookie => {
 export const letCookies = cookies => {
     if (!cookies) {
         cookies = getCookies(false);
-        for (let cookie in cookies) {
-            letCookie(cookie);
-        }
-        return;
+        return forEachObject(cookies, (v, k) => letCookie(k)), cookies;
     }
     if (isArray(cookies)) {
-        cookies.forEach(cookie => letCookie(cookie));
-        return;
+        return forEachArray(cookies, k => letCookie(k)), cookies;
     }
     if (isObject(cookies)) {
-        for (let cookie in cookies) {
-            cookies[cookie] && letCookie(cookie);
-        }
+        return forEachObject(cookies, (v, k) => v && letCookie(k)), cookies;
     }
+    return cookies;
 };
 
 export const letData = (node, data) => {
     if (!data) {
         data = getData(node, false);
-        for (let datum in data) {
-            letAttribute(node, 'data-' + datum);
-        }
-        return node;
+        return forEachObject(data, (v, k) => letAttribute(node, 'data-' + k)), node;
     }
     if (isArray(data)) {
-        return data.forEach(datum => letAttribute(node, 'data-' + datum)), node;
+        return forEachArray(data, k => letAttribute(node, 'data-' + k)), node;
     }
     if (isObject(data)) {
-        for (let datum in data) {
-            data[datum] && letAttribute(node, 'data-' + datum);
-        }
+        return forEachObject(data, (v, k) => v && letAttribute(node, 'data-' + k)), node;
     }
     return node;
 };
@@ -395,12 +386,10 @@ export const letStates = (node, states) => {
         return node;
     }
     if (isArray(states)) {
-        return states.forEach(state => letState(node, state)), node;
+        return forEachArray(states, k => letState(node, k)), node;
     }
     if (isObject(states)) {
-        for (let state in states) {
-            states[state] && letState(node, state);
-        }
+        return forEachObject(states, (v, k) => v && letState(node, k)), node;
     }
     return node;
 };
@@ -414,12 +403,10 @@ export const letStyles = (node, styles) => {
         return letAttribute(node, 'style');
     }
     if (isArray(styles)) {
-        return styles.forEach(style => letStyle(node, style)), node;
+        return forEachArray(styles, k => letStyle(node, k)), node;
     }
     if (isObject(styles)) {
-        for (let style in styles) {
-            styles[style] && letStyle(node, style);
-        }
+        return forEachObject(styles, (v, k) => v && letStyle(node, k)), node;
     }
     return node;
 };
@@ -434,10 +421,7 @@ export const replaceClass = (node, from, to) => {
 };
 
 export const replaceClasses = (node, classes) => {
-    for (let name in classes) {
-        replaceClass(node, name, classes[name]);
-    }
-    return node;
+    return forEachObject(classes, (v, k) => replaceClass(node, k, v)), node;
 };
 
 export const setAttribute = (node, attribute, value) => {
@@ -448,16 +432,9 @@ export const setAttribute = (node, attribute, value) => {
 };
 
 export const setAttributes = (node, attributes) => {
-    let value;
-    for (let attribute in attributes) {
-        value = attributes[attribute];
-        if (value || "" === value || 0 === value) {
-            setAttribute(node, attribute, value);
-        } else {
-            letAttribute(node, attribute);
-        }
-    }
-    return node;
+    return forEachObject(attributes, (v, k) => {
+        v || "" === v || 0 === v ? setAttribute(node, k, v) : letAttribute(node, k);
+    }), node;
 };
 
 export const setChildFirst = (parent, node) => {
@@ -474,21 +451,12 @@ export const setClass = (node, value) => {
 
 export const setClasses = (node, classes) => {
     if (isArray(classes)) {
-        return classes.forEach(name => node.classList.add(name)), node;
+        return forEachArray(classes, k => setClass(node, k)), node;
     }
     if (isObject(classes)) {
-        for (let name in classes) {
-            if (classes[name]) {
-                node.classList.add(name);
-            } else {
-                node.classList.remove(name);
-            }
-        }
+        return forEachObject(classes, (v, k) => v ? setClass(node, k, v) : letClass(node, k)), node;
     }
-    // if (isString(classes)) {
-        node.className = classes;
-    // }
-    return node;
+    return (node.className = classes), node;
 };
 
 export const setCookie = (cookie, value, days = 1) => {
@@ -499,28 +467,15 @@ export const setCookie = (cookie, value, days = 1) => {
 };
 
 export const setCookies = (cookies, days = 1) => {
-    let value;
-    for (let cookie in cookies) {
-        value = cookies[cookie];
-        if (value || "" === value || 0 === value) {
-            setCookie(cookie, value, days);
-        } else {
-            letCookie(cookie);
-        }
-    }
+    return forEachObject(cookies, (v, k) => {
+        v || "" === v || 0 === v ? setCookie(k, v, days) : letCookie(k);
+    }), cookies;
 };
 
 export const setData = (node, data) => {
-    let value;
-    for (let datum in data) {
-        value = data[datum];
-        if (value || "" === value || 0 === value) {
-            setDatum(node, datum, value);
-        } else {
-            letDatum(node, datum);
-        }
-    }
-    return node;
+    return forEachObject(data, (v, k) => {
+        v || "" === v || 0 === v ? setDatum(node, k, v) : letDatum(node, k);
+    }), node;
 };
 
 export const setDatum = (node, datum, value) => {
@@ -540,7 +495,7 @@ export const setElement = (node, content, attributes) => {
         setHTML(node, content);
     }
     if (isObject(attributes)) {
-        setAttributes(node, attributes);
+        return setAttributes(node, attributes), node;
     }
     return node;
 };
@@ -566,16 +521,9 @@ export const setState = (node, key, value) => {
 };
 
 export const setStates = (node, states) => {
-    let value;
-    for (let state in states) {
-        value = states[state];
-        if (value || "" === value || 0 === value) {
-            setState(node, state, states[state]);
-        } else {
-            letState(node, state);
-        }
-    }
-    return node;
+    return forEachObject(states, (v, k) => {
+        v || "" === v || 0 === v ? setState(node, k, v) : letState(node, k);
+    }), node;
 };
 
 export const setStyle = (node, style, value) => {
@@ -586,16 +534,9 @@ export const setStyle = (node, style, value) => {
 };
 
 export const setStyles = (node, styles) => {
-    let value;
-    for (let style in styles) {
-        value = styles[style];
-        if (value || "" === value || 0 === value) {
-            setStyle(node, style, value);
-        } else {
-            letStyle(node, style);
-        }
-    }
-    return node;
+    return forEachObject(styles, (v, k) => {
+        v || "" === v || 0 === v ? setStyle(node, k, v) : letStyle(node, k);
+    }), node;
 };
 
 export const setText = (node, content, trim = true) => {
@@ -624,12 +565,10 @@ export const toggleClass = (node, name, force) => {
 
 export const toggleClasses = (node, classes, force) => {
     if (isArray(classes)) {
-        return classes.forEach(name => toggleClass(node, name, force)), node;
+        return forEachArray(classes, k => toggleClass(node, k, force)), node;
     }
     if (isObject(classes)) {
-        for (let name in classes) {
-            classes[name] && toggleClass(node, name, force);
-        }
+        return forEachObject(classes, (v, k) => v && toggleClass(node, k, force)), node;
     }
     return node;
 };
@@ -639,13 +578,11 @@ export const toggleState = (node, state) => {
 };
 
 export const toggleStates = (node, states) => {
-    if (isArray(states)){
-        return states.forEach(state => toggleState(node, state)), node;
+    if (isArray(states)) {
+        return forEachArray(states, k => toggleState(node, k)), node;
     }
     if (isObject(states)) {
-        for (let state in states) {
-            states[state] && toggleState(node, state);
-        }
+        return forEachObject(states, (v, k) => v && toggleState(node, k)), node;
     }
     return node;
 };
