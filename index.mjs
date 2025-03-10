@@ -1,16 +1,7 @@
+import {forEachArray, forEachObject} from '@taufik-nurrohman/f';
 import {fromJSON, fromURL, fromValue} from '@taufik-nurrohman/from';
 import {isArray, isInstance, isNumber, isObject, isString} from '@taufik-nurrohman/is';
 import {toCaseCamel, toCaseLower, toJSON, toValue} from '@taufik-nurrohman/to';
-
-function forEachArray(array, then) {
-    array.forEach(then);
-}
-
-function forEachObject(object, then) {
-    for (let k in object) {
-        then(object[k], k);
-    }
-}
 
 export const D = document;
 export const W = window;
@@ -36,11 +27,11 @@ export const getAttribute = (node, attribute, parseValue = true) => {
 
 export const getAttributes = (node, parseValue = true) => {
     let attributes = node.attributes,
-        value, values = {};
-    for (let i = 0, j = attributes.length; i < j; ++i) {
-        value = attributes[i].value;
-        values[attributes[i].name] = parseValue ? toValue(value) : value;
-    }
+        values = {};
+    forEachArray(attributes, v => {
+        let {name, value} = v;
+        values[name] = parseValue ? toValue(value) : value;
+    });
     return values;
 };
 

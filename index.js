@@ -1,16 +1,7 @@
+const {forEachArray, forEachObject} = require('@taufik-nurrohman/f');
 const {fromJSON, fromURL, fromValue} = require('@taufik-nurrohman/from');
 const {isArray, isInstance, isNumber, isObject, isString} = require('@taufik-nurrohman/is');
 const {toCaseCamel, toCaseLower, toJSON, toValue} = require('@taufik-nurrohman/to');
-
-function forEachArray(array, then) {
-    array.forEach(then);
-}
-
-function forEachObject(object, then) {
-    for (let k in object) {
-        then(object[k], k);
-    }
-}
 
 const D = document;
 const W = window;
@@ -36,11 +27,11 @@ const getAttribute = (node, attribute, parseValue = true) => {
 
 const getAttributes = (node, parseValue = true) => {
     let attributes = node.attributes,
-        value, values = {};
-    for (let i = 0, j = attributes.length; i < j; ++i) {
-        value = attributes[i].value;
-        values[attributes[i].name] = parseValue ? toValue(value) : value;
-    }
+        values = {};
+    forEachArray(attributes, v => {
+        let {name, value} = v;
+        values[name] = parseValue ? toValue(value) : value;
+    });
     return values;
 };
 
