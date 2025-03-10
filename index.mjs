@@ -10,6 +10,8 @@ export const B = D.body;
 export const H = D.head;
 export const R = D.documentElement;
 
+export const focusTo = node => node.focus();
+
 export const fromElement = node => {
     let attributes = getAttributes(node),
         content = getHTML(node),

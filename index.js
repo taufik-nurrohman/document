@@ -10,6 +10,8 @@ const B = D.body;
 const H = D.head;
 const R = D.documentElement;
 
+const focusTo = node => node.focus();
+
 const fromElement = node => {
     let attributes = getAttributes(node),
         content = getHTML(node),
