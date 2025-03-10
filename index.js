@@ -546,7 +546,7 @@ const setElement = (node, content, attributes, options) => {
     node = isString(node) ? D.createElement(node, isString(options) ? {is: options} : options) : node;
     if (isArray(content) && toCount(content)) {
         letHTML(node);
-        forEachArray(content, v => setChildLast(isString(v) ? setElementText(v) : v);
+        forEachArray(content, v => setChildLast(isString(v) ? setElementText(v) : v));
     } else if (isObject(content)) {
         attributes = content;
         content = false;
