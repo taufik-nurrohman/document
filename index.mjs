@@ -1,7 +1,7 @@
 import {forEachArray, forEachObject} from '@taufik-nurrohman/f';
 import {fromJSON, fromURL, fromValue} from '@taufik-nurrohman/from';
 import {isArray, isInstance, isNumber, isObject, isString} from '@taufik-nurrohman/is';
-import {toCaseCamel, toCaseLower, toJSON, toValue} from '@taufik-nurrohman/to';
+import {toCaseCamel, toCaseLower, toCount, toJSON, toValue} from '@taufik-nurrohman/to';
 
 export const D = document;
 export const W = window;
@@ -35,20 +35,20 @@ export const getAttributes = (node, parseValue = true) => {
     return values;
 };
 
-export const getChild = (parent, index) => {
-    return getChildren(parent, index || 0);
+export const getChild = (parent, index, anyNode) => {
+    return getChildren(parent, index || 0, anyNode);
 };
 
-export const getChildFirst = parent => {
-    return parent.firstElementChild || null;
+export const getChildFirst = (parent, anyNode) => {
+    return parent['first' + (anyNode ? "" : 'Element') + 'Child'] || null;
 };
 
-export const getChildLast = parent => {
-    return parent.lastElementChild || null;
+export const getChildLast = (parent, anyNode) => {
+    return parent['last' + (anyNode ? "" : 'Element') + 'Child'] || null;
 };
 
-export const getChildren = (parent, index) => {
-    let children = [].slice.call(parent.children);
+export const getChildren = (parent, index, anyNode) => {
+    let children = [].slice.call(parent['child' + (anyNode ? 'Nodes' : 'ren')]);
     return isNumber(index) ? (children[index] || null) : children;
 };
 
@@ -217,6 +217,12 @@ export const getType = node => {
     return node && node.nodeType || null;
 };
 
+export const getValue = (node, parseValue) => {
+    let value = (node.value || "").replace(/\r?\n|\r/g, '\n');
+    value = parseValue ? toValue(value) : value;
+    return "" !== value ? value : null;
+};
+
 export const hasAttribute = (node, attribute) => {
     return node.hasAttribute(attribute);
 };
@@ -233,13 +239,46 @@ export const hasState = (node, state) => {
     return state in node;
 };
 
+// <https://stackoverflow.com/a/6691294/1163000>
+export const insertAtCaret = (content, mode) => {
+    let from, range, selection = D.getSelection(), to;
+    if (selection.getRangeAt && selection.rangeCount) {
+        range = selection.getRangeAt(0);
+        range.deleteContents();
+        from = setElement('div', content);
+        to = D.createDocumentFragment();
+        let nodeCurrent, nodeFirst, nodeLast;
+        while (nodeCurrent = getChildFirst(from, 1)) {
+            nodeLast = setChildLast(to, nodeCurrent);
+        }
+        nodeFirst = getChildFirst(to, 1);
+        range.insertNode(to);
+        if (nodeLast) {
+            range = range.cloneRange();
+            range.setStartAfter(nodeLast);
+            range.setStartBefore(nodeFirst);
+            if (1 === mode) {
+                range.collapse(true);
+            } else if (-1 === mode) {
+                range.collapse();
+            }
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    }
+};
+
 export const isComment = node => {
     return isNode(node) && /* Node.COMMENT_NODE */ 8 === getType(node);
 };
 
+export const isDisabled = node => node.disabled;
+
 export const isDocument = node => {
     return node === D;
 };
+
+export const isEditable = node => node.isContentEditable;
 
 export const isElement = node => {
     return isNode(node) && /* Node.ELEMENT_NODE */ 1 === getType(node);
@@ -252,6 +291,8 @@ export const isNode = node => {
 export const isParent = (node, parent, query) => {
     return node && parent && parent === getParent(node, query);
 };
+
+export const isReadOnly = node => node.readOnly;
 
 export const isText = node => {
     return isNode(node) && /* Node.TEXT_NODE */ 3 === getType(node);
@@ -415,6 +456,31 @@ export const replaceClasses = (node, classes) => {
     return forEachObject(classes, (v, k) => replaceClass(node, k, v)), node;
 };
 
+export const selectNone = node => {
+    const selection = D.getSelection();
+    if (node) {} else {
+        // selection.removeAllRanges();
+        if (selection.rangeCount) {
+            selection.removeRange(selection.getRangeAt(0));
+        }
+    }
+};
+
+export const selectTo = (node, mode) => {
+    const selection = D.getSelection();
+    selectNone();
+    const range = D.createRange();
+    range.selectNodeContents(node);
+    selection.addRange(range);
+    if (1 === mode) {
+        selection.collapseToEnd();
+    } else if (-1 === mode) {
+        selection.collapseToStart();
+    } else {
+        // Select all
+    }
+};
+
 export const setAttribute = (node, attribute, value) => {
     if (true === value) {
         value = attribute;
@@ -476,9 +542,12 @@ export const setDatum = (node, datum, value) => {
     return setAttribute(node, 'data-' + datum, value);
 };
 
-export const setElement = (node, content, attributes) => {
-    node = isString(node) ? D.createElement(node) : node;
-    if (isObject(content)) {
+export const setElement = (node, content, attributes, options) => {
+    node = isString(node) ? D.createElement(node, isString(options) ? {is: options} : options) : node;
+    if (isArray(content) && toCount(content)) {
+        letHTML(node);
+        forEachArray(content, v => setChildLast(isString(v) ? setElementText(v) : v);
+    } else if (isObject(content)) {
         attributes = content;
         content = false;
     }
@@ -490,6 +559,8 @@ export const setElement = (node, content, attributes) => {
     }
     return node;
 };
+
+export const setElementText = text => isString(text) ? D.createTextNode(text) : text;
 
 export const setHTML = (node, content, trim = true) => {
     if (null === content) {
@@ -536,6 +607,13 @@ export const setText = (node, content, trim = true) => {
     }
     let state = 'textContent';
     return hasState(node, state) && (node[state] = trim ? content.trim() : content), node;
+};
+
+export const setValue = (node, value) => {
+    if (null === value) {
+        return letAttribute(node, 'value');
+    }
+    return (node.value = fromValue(value)), node;
 };
 
 export const toElement = fromArray => {

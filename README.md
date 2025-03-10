@@ -31,6 +31,8 @@ console.log(setElement('div', 'Content goes here.', {
 Methods
 -------
 
+### focusTo(node)
+
 ### fromElement(node)
 
 Convert element to array of element name, element content and element attributes.
@@ -39,13 +41,13 @@ Convert element to array of element name, element content and element attributes
 
 ### getAttributes(node, parseValue = true)
 
-### getChild(parent, index = 0)
+### getChild(parent, index = 0, anyNode)
 
-### getChildFirst(parent)
+### getChildFirst(parent, anyNode)
 
-### getChildLast(parent)
+### getChildLast(parent, anyNode)
 
-### getChildren(parent, index)
+### getChildren(parent, index, anyNode)
 
 ### getClass(node)
 
@@ -101,6 +103,8 @@ Get closest `<form>` element from current element.
 
 ### getType(node)
 
+### getValue(node)
+
 ### hasAttribute(node, attribute)
 
 ### hasClass(node, class)
@@ -109,15 +113,23 @@ Get closest `<form>` element from current element.
 
 ### hasState(node, state)
 
+### insertAtCaret(content, mode = true)
+
 ### isComment(node)
 
+### isDisabled(node)
+
 ### isDocument(node)
+
+### isEditable(node)
 
 ### isElement(node)
 
 ### isNode(node)
 
 ### isParent(node, parent, query)
+
+### isReadOnly(node)
 
 ### isText(node)
 
@@ -243,6 +255,10 @@ setAttributes(node, {
 });
 ~~~
 
+### selectNone()
+
+### selectTo(node, mode = true)
+
 ### setChildFirst(parent, node)
 
 ### setChildLast(parent, node)
@@ -285,7 +301,7 @@ setData(node, {
 
 ### setDatum(node, datum, value)
 
-### setElement(name|node, content, attributes)
+### setElement(name|node, content, attributes, options)
 
 Create a HTML element or update the existing HTML element.
 
@@ -315,6 +331,8 @@ console.log(setElement(input, {
 }));
 ~~~
 
+### setElementText(text|node)
+
 ### setHTML(node)
 
 ### setNext(current, node)
@@ -339,6 +357,8 @@ setStyles(node, {
 ~~~
 
 ### setText(node)
+
+### setValue(node, value)
 
 ### toElement(array)
 

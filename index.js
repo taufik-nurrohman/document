@@ -1,7 +1,7 @@
 const {forEachArray, forEachObject} = require('@taufik-nurrohman/f');
 const {fromJSON, fromURL, fromValue} = require('@taufik-nurrohman/from');
 const {isArray, isInstance, isNumber, isObject, isString} = require('@taufik-nurrohman/is');
-const {toCaseCamel, toCaseLower, toJSON, toValue} = require('@taufik-nurrohman/to');
+const {toCaseCamel, toCaseLower, toCount, toJSON, toValue} = require('@taufik-nurrohman/to');
 
 const D = document;
 const W = window;
@@ -35,20 +35,20 @@ const getAttributes = (node, parseValue = true) => {
     return values;
 };
 
-const getChild = (parent, index) => {
-    return getChildren(parent, index || 0);
+const getChild = (parent, index, anyNode) => {
+    return getChildren(parent, index || 0, anyNode);
 };
 
-const getChildFirst = parent => {
-    return parent.firstElementChild || null;
+const getChildFirst = (parent, anyNode) => {
+    return parent['first' + (anyNode ? "" : 'Element') + 'Child'] || null;
 };
 
-const getChildLast = parent => {
-    return parent.lastElementChild || null;
+const getChildLast = (parent, anyNode) => {
+    return parent['last' + (anyNode ? "" : 'Element') + 'Child'] || null;
 };
 
-const getChildren = (parent, index) => {
-    let children = [].slice.call(parent.children);
+const getChildren = (parent, index, anyNode) => {
+    let children = [].slice.call(parent['child' + (anyNode ? 'Nodes' : 'ren')]);
     return isNumber(index) ? (children[index] || null) : children;
 };
 
@@ -217,6 +217,12 @@ const getType = node => {
     return node && node.nodeType || null;
 };
 
+const getValue = (node, parseValue) => {
+    let value = (node.value || "").replace(/\r?\n|\r/g, '\n');
+    value = parseValue ? toValue(value) : value;
+    return "" !== value ? value : null;
+};
+
 const hasAttribute = (node, attribute) => {
     return node.hasAttribute(attribute);
 };
@@ -233,13 +239,46 @@ const hasState = (node, state) => {
     return state in node;
 };
 
+// <https://stackoverflow.com/a/6691294/1163000>
+const insertAtCaret = (content, mode) => {
+    let from, range, selection = D.getSelection(), to;
+    if (selection.getRangeAt && selection.rangeCount) {
+        range = selection.getRangeAt(0);
+        range.deleteContents();
+        from = setElement('div', content);
+        to = D.createDocumentFragment();
+        let nodeCurrent, nodeFirst, nodeLast;
+        while (nodeCurrent = getChildFirst(from, 1)) {
+            nodeLast = setChildLast(to, nodeCurrent);
+        }
+        nodeFirst = getChildFirst(to, 1);
+        range.insertNode(to);
+        if (nodeLast) {
+            range = range.cloneRange();
+            range.setStartAfter(nodeLast);
+            range.setStartBefore(nodeFirst);
+            if (1 === mode) {
+                range.collapse(true);
+            } else if (-1 === mode) {
+                range.collapse();
+            }
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    }
+};
+
 const isComment = node => {
     return isNode(node) && /* Node.COMMENT_NODE */ 8 === getType(node);
 };
 
+const isDisabled = node => node.disabled;
+
 const isDocument = node => {
     return node === D;
 };
+
+const isEditable = node => node.isContentEditable;
 
 const isElement = node => {
     return isNode(node) && /* Node.ELEMENT_NODE */ 1 === getType(node);
@@ -252,6 +291,8 @@ const isNode = node => {
 const isParent = (node, parent, query) => {
     return node && parent && parent === getParent(node, query);
 };
+
+const isReadOnly = node => node.readOnly;
 
 const isText = node => {
     return isNode(node) && /* Node.TEXT_NODE */ 3 === getType(node);
@@ -415,6 +456,31 @@ const replaceClasses = (node, classes) => {
     return forEachObject(classes, (v, k) => replaceClass(node, k, v)), node;
 };
 
+const selectNone = node => {
+    const selection = D.getSelection();
+    if (node) {} else {
+        // selection.removeAllRanges();
+        if (selection.rangeCount) {
+            selection.removeRange(selection.getRangeAt(0));
+        }
+    }
+};
+
+const selectTo = (node, mode) => {
+    const selection = D.getSelection();
+    selectNone();
+    const range = D.createRange();
+    range.selectNodeContents(node);
+    selection.addRange(range);
+    if (1 === mode) {
+        selection.collapseToEnd();
+    } else if (-1 === mode) {
+        selection.collapseToStart();
+    } else {
+        // Select all
+    }
+};
+
 const setAttribute = (node, attribute, value) => {
     if (true === value) {
         value = attribute;
@@ -476,9 +542,12 @@ const setDatum = (node, datum, value) => {
     return setAttribute(node, 'data-' + datum, value);
 };
 
-const setElement = (node, content, attributes) => {
-    node = isString(node) ? D.createElement(node) : node;
-    if (isObject(content)) {
+const setElement = (node, content, attributes, options) => {
+    node = isString(node) ? D.createElement(node, isString(options) ? {is: options} : options) : node;
+    if (isArray(content) && toCount(content)) {
+        letHTML(node);
+        forEachArray(content, v => setChildLast(isString(v) ? setElementText(v) : v);
+    } else if (isObject(content)) {
         attributes = content;
         content = false;
     }
@@ -490,6 +559,8 @@ const setElement = (node, content, attributes) => {
     }
     return node;
 };
+
+const setElementText = text => isString(text) ? D.createTextNode(text) : text;
 
 const setHTML = (node, content, trim = true) => {
     if (null === content) {
@@ -536,6 +607,13 @@ const setText = (node, content, trim = true) => {
     }
     let state = 'textContent';
     return hasState(node, state) && (node[state] = trim ? content.trim() : content), node;
+};
+
+const setValue = (node, value) => {
+    if (null === value) {
+        return letAttribute(node, 'value');
+    }
+    return (node.value = fromValue(value)), node;
 };
 
 const toElement = fromArray => {
@@ -588,6 +666,7 @@ const theScript = D.currentScript;
 
 Object.assign(exports, {
     B, D, H, R, W,
+    focusTo,
     fromElement,
     getAttribute,
     getAttributes,
@@ -619,15 +698,20 @@ Object.assign(exports, {
     getStyles,
     getText,
     getType,
+    getValue,
     hasAttribute,
     hasClass,
     hasParent,
     hasState,
+    insertAtCaret,
     isComment,
+    isDisabled,
     isDocument,
+    isEditable,
     isElement,
     isNode,
     isParent,
+    isReadOnly,
     isText,
     isWindow,
     letAttribute,
@@ -652,6 +736,8 @@ Object.assign(exports, {
     letText,
     replaceClass,
     replaceClasses,
+    selectNone,
+    selectTo,
     setAttribute,
     setAttributes,
     setChildFirst,
@@ -671,6 +757,7 @@ Object.assign(exports, {
     setStyle,
     setStyles,
     setText,
+    setValue,
     theHistory,
     theLocation,
     theScript
