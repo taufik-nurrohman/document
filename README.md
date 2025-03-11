@@ -360,10 +360,6 @@ setStyles(node, {
 
 ### setValue(node, value)
 
-### toElement(array)
-
-Convert array of element name, element content and element attributes to element.
-
 ### toString(node)
 
 Get element&rsquo;s outer HTML.

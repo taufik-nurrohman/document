@@ -618,10 +618,6 @@ export const setValue = (node, value) => {
     return (node.value = fromValue(value)), node;
 };
 
-export const toElement = fromArray => {
-    return setElement(...fromArray);
-};
-
 export const toString = node => {
     let state = 'outerHTML';
     if (!hasState(node, state)) {

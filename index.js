@@ -618,10 +618,6 @@ const setValue = (node, value) => {
     return (node.value = fromValue(value)), node;
 };
 
-const toElement = fromArray => {
-    return setElement(...fromArray);
-};
-
 const toString = node => {
     let state = 'outerHTML';
     if (!hasState(node, state)) {
@@ -763,7 +759,6 @@ Object.assign(exports, {
     theHistory,
     theLocation,
     theScript
-    toElement,
     toString,
     toggleClass,
     toggleClasses,
