@@ -37,6 +37,10 @@ Methods
 
 Convert element to array of element name, element content and element attributes.
 
+### getAria(node, aria, parseValue = true)
+
+### getArias(node, parseValue = true)
+
 ### getAttribute(node, attribute, parseValue = true)
 
 ### getAttributes(node, parseValue = true)
@@ -75,7 +79,7 @@ Convert element to array of element name, element content and element attributes
 
 ### getID(node, batch = 'e:')
 
-Get element ID or apply a new unique ID to it then return that unique ID.
+Get element&rsquo;s ID or return an unique ID.
 
 ### getName(node)
 
@@ -93,6 +97,8 @@ Get closest `<form>` element from current element.
 
 ### getPrev(node, anyNode)
 
+### getRole(node)
+
 ### getScriptElements()
 
 ### getStyle(node, style, parseValue = true)
@@ -109,11 +115,19 @@ Get closest `<form>` element from current element.
 
 ### getValue(node)
 
+### hasAria(node, aria)
+
 ### hasAttribute(node, attribute)
 
 ### hasClass(node, class)
 
+### hasDatum(node, datum)
+
+### hasID(node)
+
 ### hasParent(node, query)
+
+### hasRole(node)
 
 ### hasState(node, state)
 
@@ -138,6 +152,10 @@ Get closest `<form>` element from current element.
 ### isText(node)
 
 ### isWindow(node)
+
+### letAria(node, aria)
+
+### letArias(node, arias)
 
 ### letAttribute(node, attribute)
 
@@ -213,9 +231,13 @@ letData(node, {
 
 ### letHTML(node)
 
+### letID(node)
+
 ### letNext(node)
 
 ### letPrev(node)
+
+### letRole(node)
 
 ### letState(node)
 
@@ -245,6 +267,14 @@ letStyles(node, {
 
 ### replaceClasses(node, classes)
 
+### selectNone()
+
+### selectTo(node, mode = true)
+
+### setAria(node, aria, value)
+
+### setArias(node, arias)
+
 ### setAttribute(node, attribute, value)
 
 ### setAttributes(node, attributes)
@@ -258,10 +288,6 @@ setAttributes(node, {
     'foo': 1
 });
 ~~~
-
-### selectNone()
-
-### selectTo(node, mode = true)
 
 ### setChildFirst(parent, node)
 
@@ -339,9 +365,15 @@ console.log(setElement(input, {
 
 ### setHTML(node)
 
+### setID(node, value, batch = 'e:')
+
+Set element&rsquo;s ID to `value` or to the value returned by `getID()` function if it is not set.
+
 ### setNext(current, node)
 
 ### setPrev(current, node)
+
+### setRole(node, value)
 
 ### setState(node, state, value)
 
@@ -413,6 +445,10 @@ Return the `window` object.
 ### theHistory
 
 Return the `window.history` object.
+
+### theID
+
+Return the unique ID storage.
 
 ### theLocation
 

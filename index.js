@@ -3,6 +3,10 @@ const {fromJSON, fromURL, fromValue} = require('@taufik-nurrohman/from');
 const {isArray, isInstance, isNumber, isObject, isSet, isString} = require('@taufik-nurrohman/is');
 const {toCaseCamel, toCaseLower, toCount, toJSON, toValue} = require('@taufik-nurrohman/to');
 
+function _toArray(iterable) {
+    return Array.from(iterable);
+}
+
 const D = document;
 const W = window;
 
@@ -17,6 +21,18 @@ const fromElement = node => {
         content = getHTML(node),
         title = getName(node);
     return false !== content ? [title, content, attributes] : [title, attributes];
+};
+
+const getAria = (node, aria, parseValue = true) => getAttribute(node, 'aria-' + aria, parseValue);
+
+const getArias = (node, parseValue = true) => {
+    let attributes = getAttributes(node, parseValue);
+    forEachObject(attributes, (v, k) => {
+        if ('aria-' !== k.slice(0, 5)) {
+            delete attributes[k];
+        }
+    });
+    return attributes;
 };
 
 const getAttribute = (node, attribute, parseValue = true) => {
@@ -37,20 +53,14 @@ const getAttributes = (node, parseValue = true) => {
     return values;
 };
 
-const getChild = (parent, index, anyNode) => {
-    return getChildren(parent, index || 0, anyNode);
-};
+const getChild = (parent, index, anyNode) => getChildren(parent, index || 0, anyNode);
 
-const getChildFirst = (parent, anyNode) => {
-    return parent['first' + (anyNode ? "" : 'Element') + 'Child'] || null;
-};
+const getChildFirst = (parent, anyNode) => parent['first' + (anyNode ? "" : 'Element') + 'Child'] || null;
 
-const getChildLast = (parent, anyNode) => {
-    return parent['last' + (anyNode ? "" : 'Element') + 'Child'] || null;
-};
+const getChildLast = (parent, anyNode) => parent['last' + (anyNode ? "" : 'Element') + 'Child'] || null;
 
 const getChildren = (parent, index, anyNode) => {
-    let children = [].slice.call(parent['child' + (anyNode ? 'Nodes' : 'ren')]);
+    let children = _toArray(parent['child' + (anyNode ? 'Nodes' : 'ren')]);
     return isNumber(index) ? (children[index] || null) : children;
 };
 
@@ -107,9 +117,7 @@ const getDatum = (node, datum, parseValue = true) => {
     return value;
 };
 
-const getElement = (query, scope) => {
-    return (scope || D).querySelector(query);
-};
+const getElement = (query, scope) => (scope || D).querySelector(query);
 
 const getElementIndex = (node, anyNode) => {
     if (!node || !getParent(node)) {
@@ -122,17 +130,11 @@ const getElementIndex = (node, anyNode) => {
     return index;
 };
 
-const getElements = (query, scope) => {
-    return (scope || D).querySelectorAll(query);
-};
+const getElements = (query, scope) => _toArray((scope || D).querySelectorAll(query));
 
-const getFormElement = nameOrIndex => {
-    return D.forms[nameOrIndex] || null;
-};
+const getFormElement = nameOrIndex => D.forms[nameOrIndex] || null;
 
-const getFormElements = () => {
-    return D.forms;
-};
+const getFormElements = () => _toArray(D.forms);
 
 const getHTML = (node, trim = true) => {
     let state = 'innerHTML';
@@ -145,22 +147,18 @@ const getHTML = (node, trim = true) => {
 };
 
 const getID = (node, batch = 'e:') => {
-    if (node.id) {
-        return node.id;
+    if (hasID(node)) {
+        return getAttribute(node, 'id');
     }
     if (!isSet(theID[batch])) {
         theID[batch] = 0;
     }
-    return (node.id = batch + (theID[batch] += 1));
+    return batch + (theID[batch] += 1);
 };
 
-const getName = node => {
-    return toCaseLower(node && node.nodeName || "") || null;
-};
+const getName = node => toCaseLower(node && node.nodeName || "") || null;
 
-const getNext = (node, anyNode) => {
-    return node['next' + (anyNode ? "" : 'Element') + 'Sibling'] || null;
-};
+const getNext = (node, anyNode) => node['next' + (anyNode ? "" : 'Element') + 'Sibling'] || null;
 
 const getParent = (node, query) => {
     if (query) {
@@ -177,13 +175,11 @@ const getParentForm = node => {
     return getParent(node, state);
 };
 
-const getPrev = (node, anyNode) => {
-    return node['previous' + (anyNode ? "" : 'Element') + 'Sibling'] || null;
-};
+const getPrev = (node, anyNode) => node['previous' + (anyNode ? "" : 'Element') + 'Sibling'] || null;
 
-const getScriptElements = () => {
-    return getElements('script');
-};
+const getRole = node => getAttribute(node, 'role');
+
+const getScriptElements = () => getElements('script');
 
 const getStyle = (node, style, parseValue = true) => {
     let value = W.getComputedStyle(node).getPropertyValue(style);
@@ -207,13 +203,9 @@ const getStyles = (node, styles, parseValue = true) => {
     return properties;
 };
 
-const getStyleElements = () => {
-    return getElements('link[href][rel=stylesheet],style');
-};
+const getStyleElements = () => getElements('link[href][rel=stylesheet],style');
 
-const getState = (node, state) => {
-    return hasState(node, state) && node[state] || null;
-};
+const getState = (node, state) => hasState(node, state) && node[state] || null;
 
 const getText = (node, trim = true) => {
     let state = 'textContent';
@@ -225,9 +217,7 @@ const getText = (node, trim = true) => {
     return "" !== content ? content : null;
 };
 
-const getType = node => {
-    return node && node.nodeType || null;
-};
+const getType = node => node && node.nodeType || null;
 
 const getValue = (node, parseValue) => {
     let value = (node.value || "").replace(/\r?\n|\r/g, '\n');
@@ -235,21 +225,21 @@ const getValue = (node, parseValue) => {
     return "" !== value ? value : null;
 };
 
-const hasAttribute = (node, attribute) => {
-    return node.hasAttribute(attribute);
-};
+const hasAria = (node, aria) => hasAttribute(node, 'aria-' + aria);
 
-const hasClass = (node, value) => {
-    return node.classList.contains(value);
-};
+const hasAttribute = (node, attribute) => node.hasAttribute(attribute);
 
-const hasParent = (node, query) => {
-    return null !== getParent(node, query);
-};
+const hasClass = (node, value) => node.classList.contains(value);
 
-const hasState = (node, state) => {
-    return state in node;
-};
+const hasDatum = (node, datum) => hasAttribute(node, 'data-' + datum);
+
+const hasID = node => hasAttribute(node, 'id');
+
+const hasParent = (node, query) => null !== getParent(node, query);
+
+const hasRole = node => hasAttribute(node, 'role');
+
+const hasState = (node, state) => state in node;
 
 // <https://stackoverflow.com/a/6691294/1163000>
 const insertAtCaret = (content, mode) => {
@@ -280,43 +270,43 @@ const insertAtCaret = (content, mode) => {
     }
 };
 
-const isComment = node => {
-    return isNode(node) && /* Node.COMMENT_NODE */ 8 === getType(node);
-};
+const isComment = node => isNode(node) && /* Node.COMMENT_NODE */ 8 === getType(node);
 
 const isDisabled = node => node.disabled;
 
-const isDocument = node => {
-    return node === D;
-};
+const isDocument = node => node === D;
 
 const isEditable = node => node.isContentEditable;
 
-const isElement = node => {
-    return isNode(node) && /* Node.ELEMENT_NODE */ 1 === getType(node);
-};
+const isElement = node => isNode(node) && /* Node.ELEMENT_NODE */ 1 === getType(node);
 
-const isNode = node => {
-    return isInstance(node, Node);
-};
+const isNode = node => isInstance(node, Node);
 
-const isParent = (node, parent, query) => {
-    return node && parent && parent === getParent(node, query);
-};
+const isParent = (node, parent, query) => node && parent && parent === getParent(node, query);
 
 const isReadOnly = node => node.readOnly;
 
-const isText = node => {
-    return isNode(node) && /* Node.TEXT_NODE */ 3 === getType(node);
+const isText = node => isNode(node) && /* Node.TEXT_NODE */ 3 === getType(node);
+
+const isWindow = node => node === W;
+
+const letAria = (node, aria) => letAttribute(node, 'aria-' + aria);
+
+const letArias = (node, arias) => {
+    if (!arias) {
+        arias = getArias(node, false);
+        return forEachObject(arias, (v, k) => letAria(node, k)), node;
+    }
+    if (isArray(arias)) {
+        return forEachArray(arias, k => letAria(node, k)), node;
+    }
+    if (isObject(arias)) {
+        return forEachObject(arias, (v, k) => v && letAria(node, k)), node;
+    }
+    return node;
 };
 
-const isWindow = node => {
-    return node === W;
-};
-
-const letAttribute = (node, attribute) => {
-    return node.removeAttribute(attribute), node;
-};
+const letAttribute = (node, attribute) => (node.removeAttribute(attribute), node);
 
 const letAttributes = (node, attributes) => {
     if (!attributes) {
@@ -350,9 +340,7 @@ const letChildren = (parent, index) => {
     return forEachArray(value, k => letElement(k)), parent;
 };
 
-const letClass = (node, value) => {
-    return node.classList.remove(value), node;
-};
+const letClass = (node, value) => (node.classList.remove(value), node);
 
 const letClasses = (node, classes) => {
     if (isArray(classes)) {
@@ -364,9 +352,7 @@ const letClasses = (node, classes) => {
     return (node.className = ""), node;
 };
 
-const letCookie = cookie => {
-    setCookie(cookie, "", -1);
-};
+const letCookie = cookie => setCookie(cookie, "", -1);
 
 const letCookies = cookies => {
     if (!cookies) {
@@ -385,20 +371,18 @@ const letCookies = cookies => {
 const letData = (node, data) => {
     if (!data) {
         data = getData(node, false);
-        return forEachObject(data, (v, k) => letAttribute(node, 'data-' + k)), node;
+        return forEachObject(data, (v, k) => letDatum(node, k)), node;
     }
     if (isArray(data)) {
-        return forEachArray(data, k => letAttribute(node, 'data-' + k)), node;
+        return forEachArray(data, k => letDatum(node, k)), node;
     }
     if (isObject(data)) {
-        return forEachObject(data, (v, k) => v && letAttribute(node, 'data-' + k)), node;
+        return forEachObject(data, (v, k) => v && letDatum(node, k)), node;
     }
     return node;
 };
 
-const letDatum = (node, datum) => {
-    return letAttribute(node, 'data-' + datum);
-};
+const letDatum = (node, datum) => letAttribute(node, 'data-' + datum);
 
 const letElement = node => {
     let parent = getParent(node);
@@ -410,6 +394,8 @@ const letHTML = node => {
     return hasState(node, state) && (node[state] = ""), node;
 };
 
+const letID = node => letAttribute(node, 'id');
+
 const letNext = node => {
     let next = getNext(node);
     return (next && letElement(next)), node;
@@ -420,9 +406,9 @@ const letPrev = node => {
     return (prev && letElement(prev)), node;
 };
 
-const letState = (node, state) => {
-    return (delete node[state]), node;
-};
+const letRole = node => letAttribute(node, 'role');
+
+const letState = (node, state) => ((delete node[state]), node);
 
 const letStates = (node, states) => {
     if (!states) {
@@ -438,9 +424,7 @@ const letStates = (node, states) => {
     return node;
 };
 
-const letStyle = (node, style) => {
-    return (node.style[toCaseCamel(style)] = null), node;
-};
+const letStyle = (node, style) => ((node.style[toCaseCamel(style)] = null), node);
 
 const letStyles = (node, styles) => {
     if (!styles) {
@@ -460,13 +444,9 @@ const letText = node => {
     return hasState(node, state) && (node[state] = ""), node;
 };
 
-const replaceClass = (node, from, to) => {
-    return node.classList.replace(from, to), node;
-};
+const replaceClass = (node, from, to) => (node.classList.replace(from, to), node);
 
-const replaceClasses = (node, classes) => {
-    return forEachObject(classes, (v, k) => replaceClass(node, k, v)), node;
-};
+const replaceClasses = (node, classes) => (forEachObject(classes, (v, k) => replaceClass(node, k, v)), node);
 
 const selectNone = node => {
     const selection = D.getSelection();
@@ -493,6 +473,14 @@ const selectTo = (node, mode) => {
     }
 };
 
+const setAria = (node, aria, value) => setAttribute(node, 'aria-' + aria, value);
+
+const setArias = (node, data) => {
+    return forEachObject(data, (v, k) => {
+        v || "" === v || 0 === v ? setAria(node, k, v) : letAria(node, k);
+    }), node;
+};
+
 const setAttribute = (node, attribute, value) => {
     if (true === value) {
         value = attribute;
@@ -506,17 +494,11 @@ const setAttributes = (node, attributes) => {
     }), node;
 };
 
-const setChildFirst = (parent, node) => {
-    return parent.prepend(node), node;
-};
+const setChildFirst = (parent, node) => (parent.prepend(node), node);
 
-const setChildLast = (parent, node) => {
-    return parent.append(node), node;
-};
+const setChildLast = (parent, node) => (parent.append(node), node);
 
-const setClass = (node, value) => {
-    return node.classList.add(value), node;
-};
+const setClass = (node, value) => (node.classList.add(value), node);
 
 const setClasses = (node, classes) => {
     if (isArray(classes)) {
@@ -572,7 +554,7 @@ const setElement = (node, content, attributes, options) => {
     return node;
 };
 
-const setElementText = text => isString(text) ? D.createTextNode(text) : text;
+const setElementText = text => (isString(text) ? (text = D.createTextNode(text)) : text, text);
 
 const setHTML = (node, content, trim = true) => {
     if (null === content) {
@@ -582,17 +564,15 @@ const setHTML = (node, content, trim = true) => {
     return hasState(node, state) && (node[state] = trim ? content.trim() : content), node;
 };
 
-const setNext = (current, node) => {
-    return getParent(current).insertBefore(node, getNext(current, true)), node;
-};
+const setID = (node, value, batch = 'e:') => setAttribute(node, 'id', isSet(value) ? value : getID(node, batch));
 
-const setPrev = (current, node) => {
-    return getParent(current).insertBefore(node, current), node;
-};
+const setNext = (current, node) => (getParent(current).insertBefore(node, getNext(current, true)), node);
 
-const setState = (node, key, value) => {
-    return (node[key] = value), node;
-};
+const setPrev = (current, node) => (getParent(current).insertBefore(node, current), node);
+
+const setRole = (node, value) => setAttribute(node, 'role', value);
+
+const setState = (node, key, value) => ((node[key] = value), node);
 
 const setStates = (node, states) => {
     return forEachObject(states, (v, k) => {
@@ -636,9 +616,7 @@ const toString = node => {
     return node[state] || "";
 };
 
-const toggleClass = (node, name, force) => {
-    return node.classList.toggle(name, force), node;
-};
+const toggleClass = (node, name, force) => (node.classList.toggle(name, force), node);
 
 const toggleClasses = (node, classes, force) => {
     if (isArray(classes)) {
@@ -650,9 +628,7 @@ const toggleClasses = (node, classes, force) => {
     return node;
 };
 
-const toggleState = (node, state) => {
-    return hasState(node, state) && (node[state] = !node[state]), node;
-};
+const toggleState = (node, state) => (hasState(node, state) && (node[state] = !node[state]), node);
 
 const toggleStates = (node, states) => {
     if (isArray(states)) {
@@ -678,6 +654,8 @@ Object.assign(exports, {
     B, D, H, R, W,
     focusTo,
     fromElement,
+    getAria,
+    getArias,
     getAttribute,
     getAttributes,
     getChild,
@@ -702,6 +680,7 @@ Object.assign(exports, {
     getParent,
     getParentForm,
     getPrev,
+    getRole,
     getScriptElements,
     getState,
     getStyle,
@@ -710,9 +689,13 @@ Object.assign(exports, {
     getText,
     getType,
     getValue,
+    hasAria,
     hasAttribute,
     hasClass,
+    hasDatum,
+    hasID,
     hasParent,
+    hasRole,
     hasState,
     insertAtCaret,
     isComment,
@@ -725,6 +708,8 @@ Object.assign(exports, {
     isReadOnly,
     isText,
     isWindow,
+    letAria,
+    letArias,
     letAttribute,
     letAttributes,
     letChildFirst,
@@ -738,8 +723,10 @@ Object.assign(exports, {
     letDatum,
     letElement,
     letHTML,
+    letID,
     letNext,
     letPrev,
+    letRole,
     letState,
     letStates,
     letStyle,
@@ -749,6 +736,8 @@ Object.assign(exports, {
     replaceClasses,
     selectNone,
     selectTo,
+    setAria,
+    setArias,
     setAttribute,
     setAttributes,
     setChildFirst,
@@ -761,8 +750,10 @@ Object.assign(exports, {
     setDatum,
     setElement,
     setHTML,
+    setID,
     setNext,
     setPrev,
+    setRole,
     setState,
     setStates,
     setStyle,

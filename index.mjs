@@ -3,6 +3,10 @@ import {fromJSON, fromURL, fromValue} from '@taufik-nurrohman/from';
 import {isArray, isInstance, isNumber, isObject, isSet, isString} from '@taufik-nurrohman/is';
 import {toCaseCamel, toCaseLower, toCount, toJSON, toValue} from '@taufik-nurrohman/to';
 
+function _toArray(iterable) {
+    return Array.from(iterable);
+}
+
 export const D = document;
 export const W = window;
 
@@ -17,6 +21,18 @@ export const fromElement = node => {
         content = getHTML(node),
         title = getName(node);
     return false !== content ? [title, content, attributes] : [title, attributes];
+};
+
+export const getAria = (node, aria, parseValue = true) => getAttribute(node, 'aria-' + aria, parseValue);
+
+export const getArias = (node, parseValue = true) => {
+    let attributes = getAttributes(node, parseValue);
+    forEachObject(attributes, (v, k) => {
+        if ('aria-' !== k.slice(0, 5)) {
+            delete attributes[k];
+        }
+    });
+    return attributes;
 };
 
 export const getAttribute = (node, attribute, parseValue = true) => {
@@ -37,20 +53,14 @@ export const getAttributes = (node, parseValue = true) => {
     return values;
 };
 
-export const getChild = (parent, index, anyNode) => {
-    return getChildren(parent, index || 0, anyNode);
-};
+export const getChild = (parent, index, anyNode) => getChildren(parent, index || 0, anyNode);
 
-export const getChildFirst = (parent, anyNode) => {
-    return parent['first' + (anyNode ? "" : 'Element') + 'Child'] || null;
-};
+export const getChildFirst = (parent, anyNode) => parent['first' + (anyNode ? "" : 'Element') + 'Child'] || null;
 
-export const getChildLast = (parent, anyNode) => {
-    return parent['last' + (anyNode ? "" : 'Element') + 'Child'] || null;
-};
+export const getChildLast = (parent, anyNode) => parent['last' + (anyNode ? "" : 'Element') + 'Child'] || null;
 
 export const getChildren = (parent, index, anyNode) => {
-    let children = [].slice.call(parent['child' + (anyNode ? 'Nodes' : 'ren')]);
+    let children = _toArray(parent['child' + (anyNode ? 'Nodes' : 'ren')]);
     return isNumber(index) ? (children[index] || null) : children;
 };
 
@@ -107,9 +117,7 @@ export const getDatum = (node, datum, parseValue = true) => {
     return value;
 };
 
-export const getElement = (query, scope) => {
-    return (scope || D).querySelector(query);
-};
+export const getElement = (query, scope) => (scope || D).querySelector(query);
 
 export const getElementIndex = (node, anyNode) => {
     if (!node || !getParent(node)) {
@@ -122,17 +130,11 @@ export const getElementIndex = (node, anyNode) => {
     return index;
 };
 
-export const getElements = (query, scope) => {
-    return (scope || D).querySelectorAll(query);
-};
+export const getElements = (query, scope) => _toArray((scope || D).querySelectorAll(query));
 
-export const getFormElement = nameOrIndex => {
-    return D.forms[nameOrIndex] || null;
-};
+export const getFormElement = nameOrIndex => D.forms[nameOrIndex] || null;
 
-export const getFormElements = () => {
-    return D.forms;
-};
+export const getFormElements = () => _toArray(D.forms);
 
 export const getHTML = (node, trim = true) => {
     let state = 'innerHTML';
@@ -145,22 +147,18 @@ export const getHTML = (node, trim = true) => {
 };
 
 export const getID = (node, batch = 'e:') => {
-    if (node.id) {
-        return node.id;
+    if (hasID(node)) {
+        return getAttribute(node, 'id');
     }
     if (!isSet(theID[batch])) {
         theID[batch] = 0;
     }
-    return (node.id = batch + (theID[batch] += 1));
+    return batch + (theID[batch] += 1);
 };
 
-export const getName = node => {
-    return toCaseLower(node && node.nodeName || "") || null;
-};
+export const getName = node => toCaseLower(node && node.nodeName || "") || null;
 
-export const getNext = (node, anyNode) => {
-    return node['next' + (anyNode ? "" : 'Element') + 'Sibling'] || null;
-};
+export const getNext = (node, anyNode) => node['next' + (anyNode ? "" : 'Element') + 'Sibling'] || null;
 
 export const getParent = (node, query) => {
     if (query) {
@@ -177,13 +175,11 @@ export const getParentForm = node => {
     return getParent(node, state);
 };
 
-export const getPrev = (node, anyNode) => {
-    return node['previous' + (anyNode ? "" : 'Element') + 'Sibling'] || null;
-};
+export const getPrev = (node, anyNode) => node['previous' + (anyNode ? "" : 'Element') + 'Sibling'] || null;
 
-export const getScriptElements = () => {
-    return getElements('script');
-};
+export const getRole = node => getAttribute(node, 'role');
+
+export const getScriptElements = () => getElements('script');
 
 export const getStyle = (node, style, parseValue = true) => {
     let value = W.getComputedStyle(node).getPropertyValue(style);
@@ -207,13 +203,9 @@ export const getStyles = (node, styles, parseValue = true) => {
     return properties;
 };
 
-export const getStyleElements = () => {
-    return getElements('link[href][rel=stylesheet],style');
-};
+export const getStyleElements = () => getElements('link[href][rel=stylesheet],style');
 
-export const getState = (node, state) => {
-    return hasState(node, state) && node[state] || null;
-};
+export const getState = (node, state) => hasState(node, state) && node[state] || null;
 
 export const getText = (node, trim = true) => {
     let state = 'textContent';
@@ -225,9 +217,7 @@ export const getText = (node, trim = true) => {
     return "" !== content ? content : null;
 };
 
-export const getType = node => {
-    return node && node.nodeType || null;
-};
+export const getType = node => node && node.nodeType || null;
 
 export const getValue = (node, parseValue) => {
     let value = (node.value || "").replace(/\r?\n|\r/g, '\n');
@@ -235,21 +225,21 @@ export const getValue = (node, parseValue) => {
     return "" !== value ? value : null;
 };
 
-export const hasAttribute = (node, attribute) => {
-    return node.hasAttribute(attribute);
-};
+export const hasAria = (node, aria) => hasAttribute(node, 'aria-' + aria);
 
-export const hasClass = (node, value) => {
-    return node.classList.contains(value);
-};
+export const hasAttribute = (node, attribute) => node.hasAttribute(attribute);
 
-export const hasParent = (node, query) => {
-    return null !== getParent(node, query);
-};
+export const hasClass = (node, value) => node.classList.contains(value);
 
-export const hasState = (node, state) => {
-    return state in node;
-};
+export const hasDatum = (node, datum) => hasAttribute(node, 'data-' + datum);
+
+export const hasID = node => hasAttribute(node, 'id');
+
+export const hasParent = (node, query) => null !== getParent(node, query);
+
+export const hasRole = node => hasAttribute(node, 'role');
+
+export const hasState = (node, state) => state in node;
 
 // <https://stackoverflow.com/a/6691294/1163000>
 export const insertAtCaret = (content, mode) => {
@@ -280,43 +270,43 @@ export const insertAtCaret = (content, mode) => {
     }
 };
 
-export const isComment = node => {
-    return isNode(node) && /* Node.COMMENT_NODE */ 8 === getType(node);
-};
+export const isComment = node => isNode(node) && /* Node.COMMENT_NODE */ 8 === getType(node);
 
 export const isDisabled = node => node.disabled;
 
-export const isDocument = node => {
-    return node === D;
-};
+export const isDocument = node => node === D;
 
 export const isEditable = node => node.isContentEditable;
 
-export const isElement = node => {
-    return isNode(node) && /* Node.ELEMENT_NODE */ 1 === getType(node);
-};
+export const isElement = node => isNode(node) && /* Node.ELEMENT_NODE */ 1 === getType(node);
 
-export const isNode = node => {
-    return isInstance(node, Node);
-};
+export const isNode = node => isInstance(node, Node);
 
-export const isParent = (node, parent, query) => {
-    return node && parent && parent === getParent(node, query);
-};
+export const isParent = (node, parent, query) => node && parent && parent === getParent(node, query);
 
 export const isReadOnly = node => node.readOnly;
 
-export const isText = node => {
-    return isNode(node) && /* Node.TEXT_NODE */ 3 === getType(node);
+export const isText = node => isNode(node) && /* Node.TEXT_NODE */ 3 === getType(node);
+
+export const isWindow = node => node === W;
+
+export const letAria = (node, aria) => letAttribute(node, 'aria-' + aria);
+
+export const letArias = (node, arias) => {
+    if (!arias) {
+        arias = getArias(node, false);
+        return forEachObject(arias, (v, k) => letAria(node, k)), node;
+    }
+    if (isArray(arias)) {
+        return forEachArray(arias, k => letAria(node, k)), node;
+    }
+    if (isObject(arias)) {
+        return forEachObject(arias, (v, k) => v && letAria(node, k)), node;
+    }
+    return node;
 };
 
-export const isWindow = node => {
-    return node === W;
-};
-
-export const letAttribute = (node, attribute) => {
-    return node.removeAttribute(attribute), node;
-};
+export const letAttribute = (node, attribute) => (node.removeAttribute(attribute), node);
 
 export const letAttributes = (node, attributes) => {
     if (!attributes) {
@@ -350,9 +340,7 @@ export const letChildren = (parent, index) => {
     return forEachArray(value, k => letElement(k)), parent;
 };
 
-export const letClass = (node, value) => {
-    return node.classList.remove(value), node;
-};
+export const letClass = (node, value) => (node.classList.remove(value), node);
 
 export const letClasses = (node, classes) => {
     if (isArray(classes)) {
@@ -364,9 +352,7 @@ export const letClasses = (node, classes) => {
     return (node.className = ""), node;
 };
 
-export const letCookie = cookie => {
-    setCookie(cookie, "", -1);
-};
+export const letCookie = cookie => setCookie(cookie, "", -1);
 
 export const letCookies = cookies => {
     if (!cookies) {
@@ -385,20 +371,18 @@ export const letCookies = cookies => {
 export const letData = (node, data) => {
     if (!data) {
         data = getData(node, false);
-        return forEachObject(data, (v, k) => letAttribute(node, 'data-' + k)), node;
+        return forEachObject(data, (v, k) => letDatum(node, k)), node;
     }
     if (isArray(data)) {
-        return forEachArray(data, k => letAttribute(node, 'data-' + k)), node;
+        return forEachArray(data, k => letDatum(node, k)), node;
     }
     if (isObject(data)) {
-        return forEachObject(data, (v, k) => v && letAttribute(node, 'data-' + k)), node;
+        return forEachObject(data, (v, k) => v && letDatum(node, k)), node;
     }
     return node;
 };
 
-export const letDatum = (node, datum) => {
-    return letAttribute(node, 'data-' + datum);
-};
+export const letDatum = (node, datum) => letAttribute(node, 'data-' + datum);
 
 export const letElement = node => {
     let parent = getParent(node);
@@ -410,6 +394,8 @@ export const letHTML = node => {
     return hasState(node, state) && (node[state] = ""), node;
 };
 
+export const letID = node => letAttribute(node, 'id');
+
 export const letNext = node => {
     let next = getNext(node);
     return (next && letElement(next)), node;
@@ -420,9 +406,9 @@ export const letPrev = node => {
     return (prev && letElement(prev)), node;
 };
 
-export const letState = (node, state) => {
-    return (delete node[state]), node;
-};
+export const letRole = node => letAttribute(node, 'role');
+
+export const letState = (node, state) => ((delete node[state]), node);
 
 export const letStates = (node, states) => {
     if (!states) {
@@ -438,9 +424,7 @@ export const letStates = (node, states) => {
     return node;
 };
 
-export const letStyle = (node, style) => {
-    return (node.style[toCaseCamel(style)] = null), node;
-};
+export const letStyle = (node, style) => ((node.style[toCaseCamel(style)] = null), node);
 
 export const letStyles = (node, styles) => {
     if (!styles) {
@@ -460,13 +444,9 @@ export const letText = node => {
     return hasState(node, state) && (node[state] = ""), node;
 };
 
-export const replaceClass = (node, from, to) => {
-    return node.classList.replace(from, to), node;
-};
+export const replaceClass = (node, from, to) => (node.classList.replace(from, to), node);
 
-export const replaceClasses = (node, classes) => {
-    return forEachObject(classes, (v, k) => replaceClass(node, k, v)), node;
-};
+export const replaceClasses = (node, classes) => (forEachObject(classes, (v, k) => replaceClass(node, k, v)), node);
 
 export const selectNone = node => {
     const selection = D.getSelection();
@@ -493,6 +473,14 @@ export const selectTo = (node, mode) => {
     }
 };
 
+export const setAria = (node, aria, value) => setAttribute(node, 'aria-' + aria, value);
+
+export const setArias = (node, data) => {
+    return forEachObject(data, (v, k) => {
+        v || "" === v || 0 === v ? setAria(node, k, v) : letAria(node, k);
+    }), node;
+};
+
 export const setAttribute = (node, attribute, value) => {
     if (true === value) {
         value = attribute;
@@ -506,17 +494,11 @@ export const setAttributes = (node, attributes) => {
     }), node;
 };
 
-export const setChildFirst = (parent, node) => {
-    return parent.prepend(node), node;
-};
+export const setChildFirst = (parent, node) => (parent.prepend(node), node);
 
-export const setChildLast = (parent, node) => {
-    return parent.append(node), node;
-};
+export const setChildLast = (parent, node) => (parent.append(node), node);
 
-export const setClass = (node, value) => {
-    return node.classList.add(value), node;
-};
+export const setClass = (node, value) => (node.classList.add(value), node);
 
 export const setClasses = (node, classes) => {
     if (isArray(classes)) {
@@ -572,7 +554,7 @@ export const setElement = (node, content, attributes, options) => {
     return node;
 };
 
-export const setElementText = text => isString(text) ? D.createTextNode(text) : text;
+export const setElementText = text => (isString(text) ? (text = D.createTextNode(text)) : text, text);
 
 export const setHTML = (node, content, trim = true) => {
     if (null === content) {
@@ -582,17 +564,15 @@ export const setHTML = (node, content, trim = true) => {
     return hasState(node, state) && (node[state] = trim ? content.trim() : content), node;
 };
 
-export const setNext = (current, node) => {
-    return getParent(current).insertBefore(node, getNext(current, true)), node;
-};
+export const setID = (node, value, batch = 'e:') => setAttribute(node, 'id', isSet(value) ? value : getID(node, batch));
 
-export const setPrev = (current, node) => {
-    return getParent(current).insertBefore(node, current), node;
-};
+export const setNext = (current, node) => (getParent(current).insertBefore(node, getNext(current, true)), node);
 
-export const setState = (node, key, value) => {
-    return (node[key] = value), node;
-};
+export const setPrev = (current, node) => (getParent(current).insertBefore(node, current), node);
+
+export const setRole = (node, value) => setAttribute(node, 'role', value);
+
+export const setState = (node, key, value) => ((node[key] = value), node);
 
 export const setStates = (node, states) => {
     return forEachObject(states, (v, k) => {
@@ -636,9 +616,7 @@ export const toString = node => {
     return node[state] || "";
 };
 
-export const toggleClass = (node, name, force) => {
-    return node.classList.toggle(name, force), node;
-};
+export const toggleClass = (node, name, force) => (node.classList.toggle(name, force), node);
 
 export const toggleClasses = (node, classes, force) => {
     if (isArray(classes)) {
@@ -650,9 +628,7 @@ export const toggleClasses = (node, classes, force) => {
     return node;
 };
 
-export const toggleState = (node, state) => {
-    return hasState(node, state) && (node[state] = !node[state]), node;
-};
+export const toggleState = (node, state) => (hasState(node, state) && (node[state] = !node[state]), node);
 
 export const toggleStates = (node, states) => {
     if (isArray(states)) {
