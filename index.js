@@ -1,6 +1,6 @@
 const {forEachArray, forEachObject} = require('@taufik-nurrohman/f');
 const {fromJSON, fromURL, fromValue} = require('@taufik-nurrohman/from');
-const {isArray, isInstance, isNumber, isObject, isString} = require('@taufik-nurrohman/is');
+const {isArray, isInstance, isNumber, isObject, isSet, isString} = require('@taufik-nurrohman/is');
 const {toCaseCamel, toCaseLower, toCount, toJSON, toValue} = require('@taufik-nurrohman/to');
 
 const D = document;
@@ -142,6 +142,16 @@ const getHTML = (node, trim = true) => {
     let content = node[state];
     content = trim ? content.trim() : content;
     return "" !== content ? content : null;
+};
+
+const getID = (node, batch = 'e:') => {
+    if (node.id) {
+        return node.id;
+    }
+    if (!isSet(theID[batch])) {
+        theID[batch] = 0;
+    }
+    return (node.id = batch + (theID[batch] += 1));
 };
 
 const getName = node => {
@@ -658,6 +668,8 @@ let theCookies = 0;
 
 const theHistory = W.history;
 
+const theID = {};
+
 const theLocation = W.location;
 
 const theScript = D.currentScript;
@@ -684,6 +696,7 @@ Object.assign(exports, {
     getFormElement,
     getFormElements,
     getHTML,
+    getID,
     getName,
     getNext,
     getParent,
@@ -757,6 +770,7 @@ Object.assign(exports, {
     setText,
     setValue,
     theHistory,
+    theID,
     theLocation,
     theScript
     toString,

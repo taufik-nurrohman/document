@@ -1,6 +1,6 @@
 import {forEachArray, forEachObject} from '@taufik-nurrohman/f';
 import {fromJSON, fromURL, fromValue} from '@taufik-nurrohman/from';
-import {isArray, isInstance, isNumber, isObject, isString} from '@taufik-nurrohman/is';
+import {isArray, isInstance, isNumber, isObject, isSet, isString} from '@taufik-nurrohman/is';
 import {toCaseCamel, toCaseLower, toCount, toJSON, toValue} from '@taufik-nurrohman/to';
 
 export const D = document;
@@ -142,6 +142,16 @@ export const getHTML = (node, trim = true) => {
     let content = node[state];
     content = trim ? content.trim() : content;
     return "" !== content ? content : null;
+};
+
+export const getID = (node, batch = 'e:') => {
+    if (node.id) {
+        return node.id;
+    }
+    if (!isSet(theID[batch])) {
+        theID[batch] = 0;
+    }
+    return (node.id = batch + (theID[batch] += 1));
 };
 
 export const getName = node => {
@@ -657,6 +667,8 @@ export const toggleStates = (node, states) => {
 let theCookies = 0;
 
 export const theHistory = W.history;
+
+export const theID = {};
 
 export const theLocation = W.location;
 
