@@ -144,6 +144,16 @@ export const getHTML = (node, trim = true) => {
     return "" !== content ? content : null;
 };
 
+export const getID = (node, batch = 'e:') => {
+    if (node.id) {
+        return node.id;
+    }
+    if (!isSet(theID[batch])) {
+        theID[batch] = 0;
+    }
+    return (node.id = batch + (theID[batch] += 1));
+};
+
 export const getName = node => {
     return toCaseLower(node && node.nodeName || "") || null;
 };
@@ -657,6 +667,8 @@ export const toggleStates = (node, states) => {
 let theCookies = 0;
 
 export const theHistory = W.history;
+
+export const theID = {};
 
 export const theLocation = W.location;
 

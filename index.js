@@ -144,6 +144,16 @@ const getHTML = (node, trim = true) => {
     return "" !== content ? content : null;
 };
 
+const getID = (node, batch = 'e:') => {
+    if (node.id) {
+        return node.id;
+    }
+    if (!isSet(theID[batch])) {
+        theID[batch] = 0;
+    }
+    return (node.id = batch + (theID[batch] += 1));
+};
+
 const getName = node => {
     return toCaseLower(node && node.nodeName || "") || null;
 };
@@ -658,6 +668,8 @@ let theCookies = 0;
 
 const theHistory = W.history;
 
+const theID = {};
+
 const theLocation = W.location;
 
 const theScript = D.currentScript;
@@ -684,6 +696,7 @@ Object.assign(exports, {
     getFormElement,
     getFormElements,
     getHTML,
+    getID,
     getName,
     getNext,
     getParent,
@@ -757,6 +770,7 @@ Object.assign(exports, {
     setText,
     setValue,
     theHistory,
+    theID,
     theLocation,
     theScript
     toString,
