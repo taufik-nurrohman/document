@@ -1,7 +1,7 @@
 const {forEachArray, forEachObject} = require('@taufik-nurrohman/f');
 const {fromJSON, fromURL, fromValue} = require('@taufik-nurrohman/from');
 const {isArray, isInstance, isNumber, isObject, isSet, isString} = require('@taufik-nurrohman/is');
-const {toCaseCamel, toCaseLower, toCount, toJSON, toValue} = require('@taufik-nurrohman/to');
+const {toCaseCamel, toCaseLower, toCount, toJSON, toString, toValue} = require('@taufik-nurrohman/to');
 
 function _toArray(iterable) {
     return Array.from(iterable);
@@ -153,7 +153,7 @@ const getID = (node, batch = 'e:') => {
     if (!isSet(theID[batch])) {
         theID[batch] = 0;
     }
-    return batch + (theID[batch] += 1);
+    return batch + toString(Date.now() + (theID[batch] += 1), 16);
 };
 
 const getName = node => toCaseLower(node && node.nodeName || "") || null;
