@@ -473,7 +473,7 @@ export const selectTo = (node, mode) => {
     }
 };
 
-export const setAria = (node, aria, value) => setAttribute(node, 'aria-' + aria, value);
+export const setAria = (node, aria, value) => setAttribute(node, 'aria-' + aria, true === value ? 'true' : value);
 
 export const setArias = (node, data) => {
     return forEachObject(data, (v, k) => {
@@ -490,6 +490,18 @@ export const setAttribute = (node, attribute, value) => {
 
 export const setAttributes = (node, attributes) => {
     return forEachObject(attributes, (v, k) => {
+        if ('aria' === k && isObject(v)) {
+            setArias(node, v);
+            continue;
+        }
+        if ('data' === k && isObject(v)) {
+            setData(node, v);
+            continue;
+        }
+        if ('style' === k && isObject(v)) {
+            setStyles(node, v);
+            continue;
+        }
         v || "" === v || 0 === v ? setAttribute(node, k, v) : letAttribute(node, k);
     }), node;
 };
@@ -533,7 +545,7 @@ export const setDatum = (node, datum, value) => {
     if (isArray(value) || isObject(value)) {
         value = toJSON(value);
     }
-    return setAttribute(node, 'data-' + datum, value);
+    return setAttribute(node, 'data-' + datum, true === value ? 'true' : value);
 };
 
 export const setElement = (node, content, attributes, options) => {
