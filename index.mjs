@@ -1,7 +1,7 @@
 import {forEachArray, forEachObject} from '@taufik-nurrohman/f';
 import {fromJSON, fromURL, fromValue} from '@taufik-nurrohman/from';
 import {isArray, isInstance, isNumber, isObject, isSet, isString} from '@taufik-nurrohman/is';
-import {toCaseCamel, toCaseLower, toCount, toJSON, toString, toValue} from '@taufik-nurrohman/to';
+import {toCaseCamel, toCaseLower, toCount, toJSON, toString as _toString, toValue} from '@taufik-nurrohman/to';
 
 function _toArray(iterable) {
     return Array.from(iterable);
@@ -153,7 +153,7 @@ export const getID = (node, batch = 'e:') => {
     if (!isSet(theID[batch])) {
         theID[batch] = 0;
     }
-    return batch + toString(Date.now() + (theID[batch] += 1), 16);
+    return batch + _toString(Date.now() + (theID[batch] += 1), 16);
 };
 
 export const getName = node => toCaseLower(node && node.nodeName || "") || null;
