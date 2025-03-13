@@ -494,6 +494,10 @@ const setAttributes = (node, attributes) => {
             setArias(node, v);
             continue;
         }
+        if ('class' === k) {
+            setClasses(node, v);
+            continue;
+        }
         if ('data' === k && isObject(v)) {
             setData(node, v);
             continue;
