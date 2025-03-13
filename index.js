@@ -491,20 +491,16 @@ const setAttribute = (node, attribute, value) => {
 const setAttributes = (node, attributes) => {
     return forEachObject(attributes, (v, k) => {
         if ('aria' === k && isObject(v)) {
-            setArias(node, v);
-            continue;
+            return setArias(node, v), 1;
         }
         if ('class' === k) {
-            setClasses(node, v);
-            continue;
+            return setClasses(node, v), 1;
         }
         if ('data' === k && isObject(v)) {
-            setData(node, v);
-            continue;
+            return setData(node, v), 1;
         }
         if ('style' === k && isObject(v)) {
-            setStyles(node, v);
-            continue;
+            return setStyles(node, v), 1;
         }
         v || "" === v || 0 === v ? setAttribute(node, k, v) : letAttribute(node, k);
     }), node;
