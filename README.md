@@ -31,8 +31,6 @@ console.log(setElement('div', 'Content goes here.', {
 Methods
 -------
 
-### focusTo(node)
-
 ### fromElement(node)
 
 Convert element to array of element name, element content and element attributes.
@@ -130,8 +128,6 @@ Get closest `<form>` element from current element.
 ### hasRole(node)
 
 ### hasState(node, state)
-
-### insertAtCaret(content, mode = true)
 
 ### isComment(node)
 
@@ -266,10 +262,6 @@ letStyles(node, {
 ### replaceClass(node, from, to)
 
 ### replaceClasses(node, classes)
-
-### selectNone()
-
-### selectTo(node, mode = true)
 
 ### setAria(node, aria, value)
 

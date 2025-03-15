@@ -14,8 +14,6 @@ const B = D.body;
 const H = D.head;
 const R = D.documentElement;
 
-const focusTo = node => node.focus();
-
 const fromElement = node => {
     let attributes = getAttributes(node),
         content = getHTML(node),
@@ -241,35 +239,6 @@ const hasRole = node => hasAttribute(node, 'role');
 
 const hasState = (node, state) => state in node;
 
-// <https://stackoverflow.com/a/6691294/1163000>
-const insertAtCaret = (content, mode) => {
-    let from, range, selection = D.getSelection(), to;
-    if (selection.getRangeAt && selection.rangeCount) {
-        range = selection.getRangeAt(0);
-        range.deleteContents();
-        from = setElement('div', content);
-        to = D.createDocumentFragment();
-        let nodeCurrent, nodeFirst, nodeLast;
-        while (nodeCurrent = getChildFirst(from, 1)) {
-            nodeLast = setChildLast(to, nodeCurrent);
-        }
-        nodeFirst = getChildFirst(to, 1);
-        range.insertNode(to);
-        if (nodeLast) {
-            range = range.cloneRange();
-            range.setStartAfter(nodeLast);
-            range.setStartBefore(nodeFirst);
-            if (1 === mode) {
-                range.collapse(true);
-            } else if (-1 === mode) {
-                range.collapse();
-            }
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
-    }
-};
-
 const isComment = node => isNode(node) && /* Node.COMMENT_NODE */ 8 === getType(node);
 
 const isDisabled = node => node.disabled;
@@ -447,31 +416,6 @@ const letText = node => {
 const replaceClass = (node, from, to) => (node.classList.replace(from, to), node);
 
 const replaceClasses = (node, classes) => (forEachObject(classes, (v, k) => replaceClass(node, k, v)), node);
-
-const selectNone = node => {
-    const selection = D.getSelection();
-    if (node) {} else {
-        // selection.removeAllRanges();
-        if (selection.rangeCount) {
-            selection.removeRange(selection.getRangeAt(0));
-        }
-    }
-};
-
-const selectTo = (node, mode) => {
-    const selection = D.getSelection();
-    selectNone();
-    const range = D.createRange();
-    range.selectNodeContents(node);
-    selection.addRange(range);
-    if (1 === mode) {
-        selection.collapseToEnd();
-    } else if (-1 === mode) {
-        selection.collapseToStart();
-    } else {
-        // Select all
-    }
-};
 
 const setAria = (node, aria, value) => setAttribute(node, 'aria-' + aria, true === value ? 'true' : value);
 
@@ -664,7 +608,6 @@ const theScript = D.currentScript;
 
 Object.assign(exports, {
     B, D, H, R, W,
-    focusTo,
     fromElement,
     getAria,
     getArias,
@@ -709,7 +652,6 @@ Object.assign(exports, {
     hasParent,
     hasRole,
     hasState,
-    insertAtCaret,
     isComment,
     isDisabled,
     isDocument,
@@ -746,8 +688,6 @@ Object.assign(exports, {
     letText,
     replaceClass,
     replaceClasses,
-    selectNone,
-    selectTo,
     setAria,
     setArias,
     setAttribute,
