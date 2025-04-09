@@ -145,6 +145,8 @@ Get closest `<form>` element from current element.
 
 ### isReadOnly(node)
 
+### isRequired(node)
+
 ### isText(node)
 
 ### isWindow(node)

@@ -255,6 +255,8 @@ const isParent = (node, parent, query) => node && parent && parent === getParent
 
 const isReadOnly = node => node.readOnly;
 
+const isRequired = node => node.required;
+
 const isText = node => isNode(node) && /* Node.TEXT_NODE */ 3 === getType(node);
 
 const isWindow = node => node === W;
@@ -660,6 +662,7 @@ Object.assign(exports, {
     isNode,
     isParent,
     isReadOnly,
+    isRequired,
     isText,
     isWindow,
     letAria,

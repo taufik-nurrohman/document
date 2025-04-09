@@ -255,6 +255,8 @@ export const isParent = (node, parent, query) => node && parent && parent === ge
 
 export const isReadOnly = node => node.readOnly;
 
+export const isRequired = node => node.required;
+
 export const isText = node => isNode(node) && /* Node.TEXT_NODE */ 3 === getType(node);
 
 export const isWindow = node => node === W;
